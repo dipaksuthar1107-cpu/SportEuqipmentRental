@@ -97,7 +97,7 @@
                             <span class="input-group-text">
                                 <i class="fas fa-user"></i>
                             </span>
-                            <input type="text" class="form-control" name="fullname" placeholder="John Smith" required value="<?php echo isset($_POST['fullname']) ? htmlspecialchars($_POST['fullname']) : ''; ?>">
+                            <input type="text" class="form-control" name="name" placeholder="John Smith" required value="{{ old('name') }}">
                         </div>
                     </div>
                     
@@ -107,7 +107,7 @@
                             <span class="input-group-text">
                                 <i class="fas fa-envelope"></i>
                             </span>
-                            <input type="email" class="form-control" name="email" placeholder="student@university.edu" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
+                            <input type="email" class="form-control" name="email" placeholder="student@university.edu" required value="{{ old('email') }}">
                         </div>
                     </div>
                 </div>
@@ -119,7 +119,7 @@
                             <span class="input-group-text">
                                 <i class="fas fa-id-card"></i>
                             </span>
-                            <input type="text" class="form-control" name="student_id" placeholder="U12345678" required value="<?php echo isset($_POST['student_id']) ? htmlspecialchars($_POST['student_id']) : ''; ?>">
+                            <input type="text" class="form-control" name="student_id" placeholder="U12345678" required value="{{ old('student_id') }}">
                         </div>
                     </div>
                     
@@ -129,7 +129,7 @@
                             <span class="input-group-text">
                                 <i class="fas fa-phone"></i>
                             </span>
-                            <input type="tel" class="form-control" name="phone" placeholder="+1 (123) 456-7890" required value="<?php echo isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : ''; ?>">
+                            <input type="tel" class="form-control" name="phone" placeholder="+1 (123) 456-7890" required value="{{ old('phone') }}">
                         </div>
                     </div>
                 </div>
@@ -191,7 +191,7 @@
                                 <span class="input-group-text">
                                     <i class="fas fa-lock"></i>
                                 </span>
-                                <input type="password" class="form-control" id="confirmPassword" name="confirm_password" placeholder="Re-enter password" required>
+                                <input type="password" class="form-control" id="confirmPassword" name="password_confirmation" placeholder="Re-enter password" required>
                             </div>
                             <button type="button" class="password-toggle" id="toggleConfirmPassword">
                                 <i class="fas fa-eye"></i>
