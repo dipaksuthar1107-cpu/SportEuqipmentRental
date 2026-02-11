@@ -494,11 +494,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php endif; ?>
             
             <!-- Demo Credentials -->
-            <div class="demo-credentials fade-in">
+            {{-- <div class="demo-credentials fade-in">
                 <h6><i class="fas fa-key"></i> Demo Admin Credentials</h6>
                 <p><strong>Username:</strong> admin@gmail.com</p>
                 <p><strong>Password:</strong> 12345</p>
-            </div>
+            </div> --}}
             
             <form method="post" id="adminLoginForm">
                 <div class="mb-4">

@@ -92,11 +92,11 @@ if (isset($_POST['login'])) {
             <?php endif; ?>
             
             <!-- Demo Credentials -->
-            <div class="demo-credentials fade-in">
+            {{-- <div class="demo-credentials fade-in">
                 <h6><i class="fas fa-info-circle"></i> Demo Credentials</h6>
                 <p><strong>Email:</strong> student@gmail.com</p>
                 <p><strong>Password:</strong> 12345</p>
-            </div>
+            </div> --}}
             
             <form method="post" id="loginForm">
                 <div class="mb-4">
