@@ -20,7 +20,7 @@ class AdminController extends Controller
         ]);
 
         // Temporary credentials (pachhi database thi aavshe)
-        if ($request->email == 'admin@gmail.com' && $request->password == 'admin') {
+        if ($request->email == 'admin@gmail.com' && $request->password == '12345') {
             // Session ma store karo
             session(['admin_login' => true]);
             session(['admin_email' => $request->email]);
@@ -41,6 +41,16 @@ class AdminController extends Controller
                 'message' => 'Please login first.'
             ]);
         }
+
+        // Get admin email from session
+        $admin_email = session('admin_email', 'admin@example.com');
+        
+        // Extract name from email (temporary until we have database)
+        $admin_name = explode('@', $admin_email)[0];
+        $admin_name = ucfirst(str_replace('.', ' ', $admin_name));
+
+        // Store admin name in session for sidebar
+        session(['admin_name' => $admin_name]);
 
         return view('admin.dashboard');
     }

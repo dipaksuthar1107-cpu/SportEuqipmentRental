@@ -21,7 +21,7 @@ class StudentController extends Controller
         ]);
 
         // Temporary credentials (pachhi database thi aavshe)
-        if ($request->email == 'student@gmail.com' && $request->password == '12345') {
+        if ($request->email == 'dipaksuthar1107@gmail.com' && $request->password == 'Dipak@1234') {
             // Session ma store karo
             session(['student_login' => true]);
             session(['student_email' => $request->email]);
@@ -43,7 +43,23 @@ class StudentController extends Controller
             ]);
         }
 
-        return view('student.dashboard');
+        // Get student email from session
+        $student_email = session('student_email', 'student@example.com');
+        
+        // Extract name from email (temporary until we have database)
+        $student_name = explode('@', $student_email)[0];
+        $student_name = ucfirst(str_replace('.', ' ', $student_name));
+
+        // Temporary stats (will come from database later)
+        $data = [
+            'student_name' => $student_name,
+            'active_bookings' => 3,
+            'pending_requests' => 2,
+            'total_bookings' => 15,
+            'available_equipment' => 45
+        ];
+
+        return view('student.dashboard', $data);
     }
 
     public function logout()
