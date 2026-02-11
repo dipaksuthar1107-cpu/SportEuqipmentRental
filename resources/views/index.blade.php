@@ -22,7 +22,7 @@ session_start();
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light">
         <div class="container">
-            <a class="navbar-brand" href="index.php">Sport<span>Rental</span></a>
+            <a class="navbar-brand" href="{{ url('/') }}">Sport<span>Rental</span></a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -31,7 +31,7 @@ session_start();
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="index.php">Home</a>
+                        <a class="nav-link active" href="{{ url('/') }}">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#equipment">Equipment</a>
@@ -478,7 +478,7 @@ session_start();
                 <a href="{{ route('student.register') }}" class="btn btn-primary btn-lg me-3">
                     <i class="fas fa-user-plus me-2"></i> Register as Student
                 </a>
-                <a href="admin/login.php" class="btn btn-secondary btn-lg">
+                <a href="{{ route('admin.login') }}" class="btn btn-secondary btn-lg">
                     <i class="fas fa-user-cog me-2"></i> Admin Portal
                 </a>
             </div>
@@ -494,7 +494,7 @@ session_start();
                     <p>Providing premium sports equipment rental services for students and staff with easy booking, flexible options, and excellent support.</p>
                     <div class="social-icons">
                         <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
                         <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
                         <a href="https://www.linkedin.com/in/dipak-suthar0560" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
                     </div>
@@ -503,7 +503,7 @@ session_start();
                     <div class="footer-links">
                         <h5>Quick Links</h5>
                         <ul>
-                            <li><a href="index.php">Home</a></li>
+                            <li><a href="{{ url('/') }}">Home</a></li>
                             <li><a href="#equipment">Equipment</a></li>
                             <li><a href="#categories">Categories</a></li>
                             <li><a href="#how-it-works">How It Works</a></li>

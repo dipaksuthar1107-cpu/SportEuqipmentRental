@@ -1,27 +1,4 @@
-<?php
-// admin_login.php
-session_start();
 
-// Demo admin credentials (use database in real project)
-$admin_username = "admin@gmail.com";
-$admin_password = "12345";
-
-$error = "";
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-
-    if ($username === $admin_username && $password === $admin_password) {
-        $_SESSION['admin'] = $username;
-        $_SESSION['admin_login'] = true;
-        header("Location: dashboard.php");
-        exit();
-    } else {
-        $error = "Invalid username or password";
-    }
-}
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -486,28 +463,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         
         <div class="admin-login-body">
-            <?php if($error): ?>
+            @if ($errors->any())
             <div class="alert alert-danger fade-in">
                 <i class="fas fa-exclamation-triangle"></i>
-                <span><strong>Access Denied:</strong> <?php echo htmlspecialchars($error); ?></span>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
-            <?php endif; ?>
+            @endif
+
+            @if(session('success'))
+            <div class="alert alert-success fade-in">
+                <i class="fas fa-check-circle"></i>
+                <span>{{ session('success') }}</span>
+            </div>
+            @endif
             
             <!-- Demo Credentials -->
-            {{-- <div class="demo-credentials fade-in">
+            <!-- <div class="demo-credentials fade-in">
                 <h6><i class="fas fa-key"></i> Demo Admin Credentials</h6>
                 <p><strong>Username:</strong> admin@gmail.com</p>
                 <p><strong>Password:</strong> 12345</p>
-            </div> --}}
+            </div> -->
             
-            <form method="post" id="adminLoginForm">
+            <form method="POST" action="{{ route('admin.login') }}" id="adminLoginForm">
+                @csrf
                 <div class="mb-4">
                     <label class="form-label">Admin Username</label>
                     <div class="input-group">
                         <span class="input-group-text">
                             <i class="fas fa-user-tie"></i>
                         </span>
-                        <input type="text" class="form-control" name="username" placeholder="Enter admin username" required value="<?php echo isset($_POST['username']) ? htmlspecialchars($_POST['username']) : ''; ?>">
+                        <input type="text" class="form-control" name="username" placeholder="Enter admin username" required value="{{ old('username') }}">
                     </div>
                 </div>
                 

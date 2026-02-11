@@ -1,121 +1,4 @@
-<?php
-session_start();
 
-// Check if student is logged in
-if (!isset($_SESSION['student_login']) || $_SESSION['student_login'] !== true) {
-    header("Location: login.php");
-    exit();
-}
-
-// Get student data
-$student_name = isset($_SESSION['student_name']) ? $_SESSION['student_name'] : "John Student";
-
-// Booking history data (in real app, fetch from database)
-$history = [
-    [
-        'id' => 1,
-        'equipment' => 'Cricket Bat',
-        'category' => 'Outdoor',
-        'quantity' => 2,
-        'booked_date' => '05-Jan-2026',
-        'pickup_date' => '05-Jan-2026',
-        'returned_date' => '06-Jan-2026',
-        'status' => 'returned',
-        'feedback' => 'submitted',
-        'icon' => 'fas fa-baseball-bat',
-        'deposit' => '₹400',
-        'rating' => 5,
-        'feedback_date' => '07-Jan-2026'
-    ],
-    [
-        'id' => 2,
-        'equipment' => 'Football',
-        'category' => 'Outdoor',
-        'quantity' => 1,
-        'booked_date' => '20-Dec-2025',
-        'pickup_date' => '20-Dec-2025',
-        'returned_date' => '21-Dec-2025',
-        'status' => 'returned',
-        'feedback' => 'pending',
-        'icon' => 'fas fa-futbol',
-        'deposit' => '₹150',
-        'rating' => null,
-        'feedback_date' => null
-    ],
-    [
-        'id' => 3,
-        'equipment' => 'Dumbbells (10kg)',
-        'category' => 'Fitness',
-        'quantity' => 1,
-        'booked_date' => '10-Dec-2025',
-        'pickup_date' => '10-Dec-2025',
-        'returned_date' => '10-Dec-2025',
-        'status' => 'returned',
-        'feedback' => 'submitted',
-        'icon' => 'fas fa-dumbbell',
-        'deposit' => '₹250',
-        'rating' => 4,
-        'feedback_date' => '11-Dec-2025'
-    ],
-    [
-        'id' => 4,
-        'equipment' => 'Basketball',
-        'category' => 'Outdoor',
-        'quantity' => 1,
-        'booked_date' => '05-Dec-2025',
-        'pickup_date' => '05-Dec-2025',
-        'returned_date' => '06-Dec-2025',
-        'status' => 'returned',
-        'feedback' => 'submitted',
-        'icon' => 'fas fa-basketball-ball',
-        'deposit' => '₹180',
-        'rating' => 5,
-        'feedback_date' => '07-Dec-2025'
-    ],
-    [
-        'id' => 5,
-        'equipment' => 'Table Tennis Set',
-        'category' => 'Indoor',
-        'quantity' => 1,
-        'booked_date' => '25-Nov-2025',
-        'pickup_date' => '25-Nov-2025',
-        'returned_date' => '26-Nov-2025',
-        'status' => 'returned',
-        'feedback' => 'submitted',
-        'icon' => 'fas fa-table-tennis',
-        'deposit' => '₹300',
-        'rating' => 4,
-        'feedback_date' => '27-Nov-2025'
-    ],
-    [
-        'id' => 6,
-        'equipment' => 'Badminton Racket',
-        'category' => 'Indoor',
-        'quantity' => 2,
-        'booked_date' => '15-Nov-2025',
-        'pickup_date' => '15-Nov-2025',
-        'returned_date' => '16-Nov-2025',
-        'status' => 'returned',
-        'feedback' => 'pending',
-        'icon' => 'fas fa-table-tennis',
-        'deposit' => '₹300',
-        'rating' => null,
-        'feedback_date' => null
-    ]
-];
-
-// Stats
-$total_bookings = count($history);
-$feedback_pending = array_filter($history, function($item) {
-    return $item['feedback'] === 'pending';
-});
-$feedback_pending_count = count($feedback_pending);
-
-// Sort by date (newest first)
-usort($history, function($a, $b) {
-    return strtotime($b['booked_date']) - strtotime($a['booked_date']);
-});
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -140,61 +23,61 @@ usort($history, function($a, $b) {
         <div class="sidebar-header">
             <div class="student-info">
                 <div class="student-avatar">
-                    <?php echo strtoupper(substr($student_name, 0, 2)); ?>
+                    {{ strtoupper(substr(session('student_name', 'Student'), 0, 2)) }}
                 </div>
-                <h5><?php echo htmlspecialchars($student_name); ?></h5>
+                <h5>{{ session('student_name', 'Student') }}</h5>
                 <p>Student Account</p>
             </div>
         </div>
         
         <ul class="sidebar-menu">
             <li>
-                <a href="dashboard.php">
+                <a href="{{ route('student.dashboard') }}">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="equipment-list.php">
+                <a href="{{ route('student.equipment-list') }}">
                     <i class="fas fa-basketball-ball"></i>
                     <span>Equipment List</span>
                 </a>
             </li>
             <li>
-                <a href="booking-status.php">
+                <a href="{{ route('student.booking-status') }}">
                     <i class="fas fa-calendar-check"></i>
                     <span>My Bookings</span>
                 </a>
             </li>
             <li>
-                <a href="booking-history.php" class="active">
+                <a href="{{ route('student.booking-history') }}" class="active">
                     <i class="fas fa-history"></i>
                     <span>Booking History</span>
                 </a>
             </li>
             <li>
-                <a href="request-book.php">
+                <a href="{{ route('student.filter') }}">
+                    <i class="fas fa-filter"></i>
+                    <span>Filter Equipment</span>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('student.request-book') }}">
                     <i class="fas fa-plus-circle"></i>
                     <span>Request Equipment</span>
                 </a>
             </li>
             <li>
-                <a href="feedback.php">
+                <a href="{{ route('student.feedback') }}">
                     <i class="fas fa-star"></i>
                     <span>Submit Feedback</span>
-                </a>
-            </li>
-            <li>
-                <a href="logout.php" class="text-danger">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
                 </a>
             </li>
         </ul>
         
         <div class="sidebar-footer">
-            <a href="dashboard.php" class="btn btn-outline-primary btn-sm w-100">
-                <i class="fas fa-home me-2"></i> Back to Dashboard
+            <a href="{{ route('student.logout') }}" class="btn btn-danger btn-sm w-100">
+                <i class="fas fa-sign-out-alt me-2"></i> Logout
             </a>
         </div>
     </div>

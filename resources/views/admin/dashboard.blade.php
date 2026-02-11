@@ -654,37 +654,37 @@
         
         <ul class="sidebar-menu">
             <li>
-                <a href="dashboard.php" class="active">
+                <a href="{{ route('admin.dashboard') }}" class="active">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="equipment.php">
+                <a href="{{ route('admin.equipment') }}">
                     <i class="fas fa-dumbbell"></i>
                     <span>Equipment</span>
                 </a>
             </li>
             <li>
-                <a href="booking.php">
+                <a href="{{ route('admin.booking') }}">
                     <i class="fas fa-calendar-check"></i>
                     <span>Bookings</span>
                 </a>
             </li>
             <li>
-                <a href="report.php">
+                <a href="{{ route('admin.report') }}">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reports</span>
                 </a>
             </li>
             <li>
-                <a href="penalty.php">
+                <a href="{{ route('admin.penalty') }}">
                     <i class="fas fa-exclamation-triangle"></i>
                     <span>Penalty</span>
                 </a>
             </li>
             <li class="mt-4">
-                <a href="logout.php">
+                <a href="{{ route('admin.logout') }}">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </a>
@@ -693,7 +693,7 @@
         
         <div class="user-profile">
             <div class="user-avatar">AD</div>
-            <div class="user-name">Admin User</div>
+            <div class="user-name">{{ session('admin_name', 'Admin User') }}</div>
             <div class="user-role">Super Administrator</div>
         </div>
     </div>
@@ -720,25 +720,25 @@
             <h5>Quick Actions</h5>
             <div class="row g-3">
                 <div class="col-md-3 col-6">
-                    <a href="equipment.php" class="action-btn">
+                    <a href="{{ route('admin.equipment') }}" class="action-btn">
                         <i class="fas fa-plus-circle"></i>
                         <span>Add Equipment</span>
                     </a>
                 </div>
                 <div class="col-md-3 col-6">
-                    <a href="booking.php" class="action-btn">
+                    <a href="{{ route('admin.booking') }}" class="action-btn">
                         <i class="fas fa-calendar-plus"></i>
                         <span>New Booking</span>
                     </a>
                 </div>
                 <div class="col-md-3 col-6">
-                    <a href="report.php" class="action-btn">
+                    <a href="{{ route('admin.report') }}" class="action-btn">
                         <i class="fas fa-file-export"></i>
                         <span>Generate Report</span>
                     </a>
                 </div>
                 <div class="col-md-3 col-6">
-                    <a href="penalty.php" class="action-btn">
+                    <a href="{{ route('admin.penalty') }}" class="action-btn">
                         <i class="fas fa-exclamation-triangle"></i>
                         <span>Add Penalty</span>
                     </a>

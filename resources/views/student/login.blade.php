@@ -1,22 +1,4 @@
-<?php
-session_start();
 
-/* Login button click */
-if (isset($_POST['login'])) {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    /* Dummy credentials (later DB se aayega) */
-    if ($email == "student@gmail.com" && $password == "12345") {
-        $_SESSION['student_login'] = true;
-        $_SESSION['student_email'] = $email;
-        header("Location: dashboard.php");
-        exit();
-    } else {
-        $error = "Invalid Email or Password";
-    }
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -77,35 +59,48 @@ if (isset($_POST['login'])) {
         </div>
         
         <div class="login-body">
-            <?php if(isset($error)): ?>
+            <!-- Error handling using Laravel Blade -->
+            @if ($errors->any())
             <div class="alert alert-danger fade-in">
                 <i class="fas fa-exclamation-circle"></i>
-                <span><?php echo $error; ?></span>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
-            <?php endif; ?>
+            @endif
             
-            <?php if(isset($_GET['registered']) && $_GET['registered'] == 'success'): ?>
+            @if(session('success'))
+            <div class="alert alert-success fade-in">
+                <i class="fas fa-check-circle"></i>
+                <span>{{ session('success') }}</span>
+            </div>
+            @endif
+            
+            @if(request()->has('registered') && request()->get('registered') == 'success')
             <div class="alert alert-success fade-in">
                 <i class="fas fa-check-circle"></i>
                 <span>Registration successful! Please login with your credentials.</span>
             </div>
-            <?php endif; ?>
+            @endif
             
             <!-- Demo Credentials -->
-            {{-- <div class="demo-credentials fade-in">
+            <!-- <div class="demo-credentials fade-in">
                 <h6><i class="fas fa-info-circle"></i> Demo Credentials</h6>
                 <p><strong>Email:</strong> student@gmail.com</p>
                 <p><strong>Password:</strong> 12345</p>
-            </div> --}}
+            </div> -->
             
-            <form method="post" id="loginForm">
+            <form method="POST" action="{{ route('student.login') }}" id="loginForm">
+                @csrf
                 <div class="mb-4">
                     <label class="form-label">Email Address / Student ID</label>
                     <div class="input-group">
                         <span class="input-group-text">
                             <i class="fas fa-envelope"></i>
                         </span>
-                        <input type="text" class="form-control" name="email" placeholder="student@gmail.com" required value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
+                        <input type="text" class="form-control" name="email" placeholder="student@gmail.com" required value="{{ old('email') }}">
                     </div>
                 </div>
                 
@@ -132,8 +127,7 @@ if (isset($_POST['login'])) {
                     <a href="{{ route('student.forgot-password') }}" class="text-decoration-none">Forgot password?</a>
                 </div>
                 
-                <button type="submit" class="btn btn-primary w-100 mb-3" name="login">
-                    <a href="{{ route('student.dashboard') }}"></a>
+                <button type="submit" class="btn btn-primary w-100 mb-3">
                     <i class="fas fa-sign-in-alt me-2"></i> Login to Account
                 </button>
                 

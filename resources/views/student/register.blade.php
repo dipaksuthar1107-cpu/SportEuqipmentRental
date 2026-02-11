@@ -1,57 +1,3 @@
-<?php
-session_start();
-
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Get form data
-    $fullname = $_POST['fullname'] ?? '';
-    $email = $_POST['email'] ?? '';
-    $student_id = $_POST['student_id'] ?? '';
-    $phone = $_POST['phone'] ?? '';
-    $password = $_POST['password'] ?? '';
-    $confirm_password = $_POST['confirm_password'] ?? '';
-    
-    // Basic validation
-    $errors = [];
-    
-    if (empty($fullname)) {
-        $errors[] = "Full name is required";
-    }
-    
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Valid email is required";
-    }
-    
-    if (empty($student_id)) {
-        $errors[] = "Student ID is required";
-    }
-    
-    if (empty($phone)) {
-        $errors[] = "Phone number is required";
-    }
-    
-    if (strlen($password) < 6) {
-        $errors[] = "Password must be at least 6 characters";
-    }
-    
-    if ($password !== $confirm_password) {
-        $errors[] = "Passwords do not match";
-    }
-    
-    // If no errors, simulate successful registration
-    if (empty($errors)) {
-        // In real application, you would:
-        // 1. Check if email/student_id already exists
-        // 2. Hash the password
-        // 3. Insert into database
-        // 4. Send confirmation email
-        
-        // For demo, we'll just redirect to login with success message
-        header("Location: login.php?registered=success");
-        exit();
-    }
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/assets/student/css/register.css">
+    <link rel="stylesheet" href="{{ asset('assets/student/css/register.css') }}">
 </head>
 <body>
 
@@ -128,21 +74,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
             
-            <?php if(!empty($errors)): ?>
+            @if ($errors->any())
             <div class="alert alert-danger fade-in">
                 <i class="fas fa-exclamation-circle"></i>
                 <div>
                     <strong>Please fix the following errors:</strong>
                     <ul class="mb-0 mt-2">
-                        <?php foreach($errors as $error): ?>
-                        <li><?php echo htmlspecialchars($error); ?></li>
-                        <?php endforeach; ?>
+                        @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
                     </ul>
                 </div>
             </div>
-            <?php endif; ?>
+            @endif
             
-            <form method="post" id="registrationForm">
+            <form method="post" action="{{ route('student.register.submit') }}" id="registrationForm">
+                @csrf
                 <div class="row form-row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Full Name *</label>
@@ -294,6 +241,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Custom JS -->
-<script src="/assets/student/js/register.js"></script>
+    <script src="{{ asset('assets/student/js/register.js') }}"></script>
 </body>
 </html>

@@ -1,92 +1,4 @@
-<?php
-session_start();
 
-// Check if student is logged in
-if (!isset($_SESSION['student_login']) || $_SESSION['student_login'] !== true) {
-    header("Location: login.php");
-    exit();
-}
-
-// Get student data
-$student_name = isset($_SESSION['student_name']) ? $_SESSION['student_name'] : "John Student";
-
-// Booking data (in real app, fetch from database)
-$bookings = [
-    [
-        'id' => 1,
-        'equipment' => 'Cricket Bat',
-        'category' => 'Outdoor',
-        'quantity' => 2,
-        'booking_date' => '10-Feb-2026',
-        'pickup_date' => '10-Feb-2026',
-        'return_date' => '11-Feb-2026',
-        'status' => 'pending',
-        'icon' => 'fas fa-baseball-bat',
-        'deposit' => '₹400'
-    ],
-    [
-        'id' => 2,
-        'equipment' => 'Football',
-        'category' => 'Outdoor',
-        'quantity' => 1,
-        'booking_date' => '05-Feb-2026',
-        'pickup_date' => '06-Feb-2026',
-        'return_date' => '06-Feb-2026',
-        'status' => 'approved',
-        'icon' => 'fas fa-futbol',
-        'deposit' => '₹150'
-    ],
-    [
-        'id' => 3,
-        'equipment' => 'Dumbbells (10kg)',
-        'category' => 'Fitness',
-        'quantity' => 1,
-        'booking_date' => '01-Feb-2026',
-        'pickup_date' => '02-Feb-2026',
-        'return_date' => '02-Feb-2026',
-        'status' => 'collected',
-        'icon' => 'fas fa-dumbbell',
-        'deposit' => '₹250'
-    ],
-    [
-        'id' => 4,
-        'equipment' => 'Badminton Racket',
-        'category' => 'Indoor',
-        'quantity' => 2,
-        'booking_date' => '28-Jan-2026',
-        'pickup_date' => '28-Jan-2026',
-        'return_date' => '29-Jan-2026',
-        'status' => 'returned',
-        'icon' => 'fas fa-table-tennis',
-        'deposit' => '₹300'
-    ],
-    [
-        'id' => 5,
-        'equipment' => 'Basketball',
-        'category' => 'Outdoor',
-        'quantity' => 1,
-        'booking_date' => '25-Jan-2026',
-        'pickup_date' => '25-Jan-2026',
-        'return_date' => '26-Jan-2026',
-        'status' => 'cancelled',
-        'icon' => 'fas fa-basketball-ball',
-        'deposit' => '₹180'
-    ]
-];
-
-// Count bookings by status
-$status_counts = [
-    'pending' => 0,
-    'approved' => 0,
-    'collected' => 0,
-    'returned' => 0,
-    'cancelled' => 0
-];
-
-foreach ($bookings as $booking) {
-    $status_counts[$booking['status']]++;
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -111,61 +23,55 @@ foreach ($bookings as $booking) {
         <div class="sidebar-header">
             <div class="student-info">
                 <div class="student-avatar">
-                    <?php echo strtoupper(substr($student_name, 0, 2)); ?>
+                    {{ strtoupper(substr(session('student_name', 'Student'), 0, 2)) }}
                 </div>
-                <h5><?php echo htmlspecialchars($student_name); ?></h5>
+                <h5>{{ session('student_name', 'Student') }}</h5>
                 <p>Student Account</p>
             </div>
         </div>
         
         <ul class="sidebar-menu">
             <li>
-                <a href="dashboard.php">
+                <a href="{{ route('student.dashboard') }}">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="equipment-list.php">
+                <a href="{{ route('student.equipment-list') }}">
                     <i class="fas fa-basketball-ball"></i>
                     <span>Equipment List</span>
                 </a>
             </li>
             <li>
-                <a href="booking-status.php" class="active">
+                <a href="{{ route('student.booking-status') }}" class="active">
                     <i class="fas fa-calendar-check"></i>
                     <span>My Bookings</span>
                 </a>
             </li>
             <li>
-                <a href="booking-history.php">
+                <a href="{{ route('student.booking-history') }}">
                     <i class="fas fa-history"></i>
                     <span>Booking History</span>
                 </a>
             </li>
             <li>
-                <a href="request-book.php">
+                <a href="{{ route('student.request-book') }}">
                     <i class="fas fa-plus-circle"></i>
                     <span>Request Equipment</span>
                 </a>
             </li>
             <li>
-                <a href="feedback.php">
+                <a href="{{ route('student.feedback') }}">
                     <i class="fas fa-star"></i>
                     <span>Submit Feedback</span>
-                </a>
-            </li>
-            <li>
-                <a href="logout.php" class="text-danger">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
                 </a>
             </li>
         </ul>
         
         <div class="sidebar-footer">
-            <a href="dashboard.php" class="btn btn-outline-primary btn-sm w-100">
-                <i class="fas fa-home me-2"></i> Back to Dashboard
+            <a href="{{ route('student.logout') }}" class="btn btn-danger btn-sm w-100">
+                <i class="fas fa-sign-out-alt me-2"></i> Logout
             </a>
         </div>
     </div>

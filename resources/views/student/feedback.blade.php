@@ -1,29 +1,4 @@
-<?php
-session_start();
 
-// Check if student is logged in
-if (!isset($_SESSION['student_login']) || $_SESSION['student_login'] !== true) {
-    header("Location: login.php");
-    exit();
-}
-
-// Get student data
-$student_name = isset($_SESSION['student_name']) ? $_SESSION['student_name'] : "John Student";
-
-// Equipment data (in real app, fetch from database based on booking ID)
-$booking_id = isset($_GET['booking_id']) ? $_GET['booking_id'] : 0;
-$equipment_name = isset($_GET['equipment']) ? urldecode($_GET['equipment']) : 'Cricket Bat';
-$category = isset($_GET['category']) ? urldecode($_GET['category']) : 'Outdoor';
-
-// Default icon based on category
-$icon_map = [
-    'Outdoor' => 'fas fa-sun',
-    'Indoor' => 'fas fa-home',
-    'Fitness' => 'fas fa-dumbbell',
-    'Other' => 'fas fa-ellipsis-h'
-];
-$equipment_icon = $icon_map[$category] ?? 'fas fa-basketball-ball';
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,7 +10,7 @@ $equipment_icon = $icon_map[$category] ?? 'fas fa-basketball-ball';
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/assets/student/css/feedback.css">
+    <link rel="stylesheet" href="{{ asset('assets/student/css/feedback.css') }}">
 </head>
 <body>
     <!-- Mobile Toggle -->
@@ -48,67 +23,61 @@ $equipment_icon = $icon_map[$category] ?? 'fas fa-basketball-ball';
         <div class="sidebar-header">
             <div class="student-info">
                 <div class="student-avatar">
-                    <?php echo strtoupper(substr($student_name, 0, 2)); ?>
+                    {{ strtoupper(substr(session('student_name', 'Student'), 0, 2)) }}
                 </div>
-                <h5><?php echo htmlspecialchars($student_name); ?></h5>
+                <h5>{{ session('student_name', 'Student') }}</h5>
                 <p>Student Account</p>
             </div>
         </div>
         
         <ul class="sidebar-menu">
             <li>
-                <a href="dashboard.php">
+                <a href="{{ route('student.dashboard') }}">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="equipment-list.php">
+                <a href="{{ route('student.equipment-list') }}">
                     <i class="fas fa-basketball-ball"></i>
                     <span>Equipment List</span>
                 </a>
             </li>
             <li>
-                <a href="booking-status.php">
+                <a href="{{ route('student.booking-status') }}">
                     <i class="fas fa-calendar-check"></i>
                     <span>My Bookings</span>
                 </a>
             </li>
             <li>
-                <a href="booking-history.php">
+                <a href="{{ route('student.booking-history') }}">
                     <i class="fas fa-history"></i>
                     <span>Booking History</span>
                 </a>
             </li>
             <li>
-                <a href="filter.php">
+                <a href="{{ route('student.filter') }}">
                     <i class="fas fa-filter"></i>
                     <span>Filter Equipment</span>
                 </a>
             </li>
             <li>
-                <a href="request-book.php">
+                <a href="{{ route('student.request-book') }}">
                     <i class="fas fa-plus-circle"></i>
                     <span>Request Equipment</span>
                 </a>
             </li>
             <li>
-                <a href="feedback.php" class="active">
+                <a href="{{ route('student.feedback') }}" class="active">
                     <i class="fas fa-star"></i>
                     <span>Submit Feedback</span>
-                </a>
-            </li>
-            <li>
-                <a href="logout.php" class="text-danger">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span>Logout</span>
                 </a>
             </li>
         </ul>
         
         <div class="sidebar-footer">
-            <a href="dashboard.php" class="btn btn-outline-primary btn-sm w-100">
-                <i class="fas fa-home me-2"></i> Back to Dashboard
+            <a href="{{ route('student.logout') }}" class="btn btn-danger btn-sm w-100">
+                <i class="fas fa-sign-out-alt me-2"></i> Logout
             </a>
         </div>
     </div>
@@ -317,6 +286,6 @@ $equipment_icon = $icon_map[$category] ?? 'fas fa-basketball-ball';
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
-    <script src="/assets/student/js/feedback.js"></script>
+    <script src="{{ asset('assets/student/js/feedback.js') }}"></script>
 </body>
 </html>

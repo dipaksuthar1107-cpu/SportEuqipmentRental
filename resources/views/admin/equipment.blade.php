@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../admin1/css/equipment.css">
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/equipment.css') }}">
 </head>
 <body>
     <!-- Sidebar -->
@@ -24,37 +24,37 @@
         
         <ul class="sidebar-menu">
             <li>
-                <a href="dashboard.php" class="active">
+                <a href="{{ route('admin.dashboard') }}">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="equipment.php">
+                <a href="{{ route('admin.equipment') }}" class="active">
                     <i class="fas fa-dumbbell"></i>
                     <span>Equipment</span>
                 </a>
             </li>
             <li>
-                <a href="booking.php">
+                <a href="{{ route('admin.booking') }}">
                     <i class="fas fa-calendar-check"></i>
                     <span>Bookings</span>
                 </a>
             </li>
             <li>
-                <a href="report.php">
+                <a href="{{ route('admin.report') }}">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reports</span>
                 </a>
             </li>
             <li>
-                <a href="penalty.php">
+                <a href="{{ route('admin.penalty') }}">
                     <i class="fas fa-exclamation-triangle"></i>
                     <span>Penalty</span>
                 </a>
             </li>
             <li class="mt-4">
-                <a href="logout.php">
+                <a href="{{ route('admin.logout') }}">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Logout</span>
                 </a>
@@ -63,7 +63,7 @@
         
         <div class="user-profile">
             <div class="user-avatar">AD</div>
-            <div class="user-name">Admin User</div>
+            <div class="user-name">{{ session('admin_name', 'Admin User') }}</div>
             <div class="user-role">Super Administrator</div>
         </div>
     </div>
@@ -363,6 +363,6 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="admin1/js/equipment.js"></script>
+    <script src="{{ asset('assets/admin/js/equipment.js') }}"></script>
 </body>
 </html>

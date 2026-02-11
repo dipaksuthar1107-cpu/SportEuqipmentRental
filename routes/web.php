@@ -2,76 +2,50 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Student\StudentController;
-
+use App\Http\Controllers\Admin\AdminController;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
 */
 
 Route::get('/', function () {
     return view('index');
 });
 
-// Route::get('/index', function () {
-//    return view('index');
-// });
-
-// Student Routes
-
-Route::get('/student/login', function () {
-    return view('student.login');
-})->name('student.login');
-
-Route::get('/student/forgot-password', function () {
-    return view('student.forgot-password');
-})->name('student.forgot-password');
-
-Route::get('/student/register', function () {
-    return view('student.register');
-})->name('student.register');
-
-Route::get('/student/dashboard', function () {
-    return view('student.dashboard');
-})->name('student.dashboard');
-
-Route::get('/student/booking-history', function () {
-    return view('student.booking-history');
-})->name('student.booking-history');
-
-Route::get('/student/booking-status', function () {
-    return view('student.booking-status');
-})->name('student.booking-status');
-
-Route::get('/student/equipment-list', function () {
-    return view('student.equipment-list');
-})->name('student.equipment-list');
-
-Route::get('/student/request-book', function () {
-    return view('student.request-book');
-})->name('student.request-book');
-Route::get('/student/filter', function () {
-    return view('student.filter');
+Route::prefix('student')->name('student.')->group(function () {
+    Route::get('/login', [StudentController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [StudentController::class, 'login']);
+    Route::get('/logout', [StudentController::class, 'logout'])->name('logout');
+    
+    // Protected Routes
+    Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('dashboard');
+    Route::get('/equipment-list', [StudentController::class, 'equipmentList'])->name('equipment-list');
+    Route::get('/booking-status', [StudentController::class, 'bookingStatus'])->name('booking-status');
+    Route::get('/booking-history', [StudentController::class, 'bookingHistory'])->name('booking-history');
+    Route::get('/filter', [StudentController::class, 'filter'])->name('filter');
+    Route::get('/request-book', [StudentController::class, 'requestBook'])->name('request-book');
+    Route::get('/feedback', [StudentController::class, 'feedback'])->name('feedback');
+    
+    // Public/Auth agnostic
+    Route::get('/forgot-password', function () { return view('student.forgot-password'); })->name('forgot-password');
+    Route::get('/register', function () { return view('student.register'); })->name('register');
+    Route::post('/register', [StudentController::class, 'registerPost'])->name('register.submit');
 });
 
-Route::get('/student/feedback', function () {
-    return view('student.feedback');
-})->name('student.feedback');
-
-Route::get('/student/logout', function () {
-    return view('student.logout');
-})->name('student.logout');
-
 // Admin Routes
-
-Route::get('/admin/login', function () {
-    return view('admin.login');
-})->name('admin.login');
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/login', [AdminController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AdminController::class, 'login']);
+    Route::get('/logout', [AdminController::class, 'logout'])->name('logout');
+    
+    // Protected Routes
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/equipment', [AdminController::class, 'equipment'])->name('equipment');
+    Route::get('/booking', [AdminController::class, 'booking'])->name('booking');
+    Route::get('/report', [AdminController::class, 'report'])->name('report');
+    Route::get('/penalty', [AdminController::class, 'penalty'])->name('penalty');
+});
 
 
