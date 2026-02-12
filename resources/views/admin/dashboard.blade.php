@@ -654,31 +654,31 @@
         
         <ul class="sidebar-menu">
             <li>
-                <a href="{{ route('admin.dashboard') }}" class="active">
+                <a href="{{ route('admin.dashboard') }}" class="{{ Request::is('admin/dashboard*') ? 'active' : '' }}">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.equipment') }}">
+                <a href="{{ route('admin.equipment') }}" class="{{ Request::is('admin/equipment*') ? 'active' : '' }}">
                     <i class="fas fa-dumbbell"></i>
                     <span>Equipment</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.booking') }}">
+                <a href="{{ route('admin.booking') }}" class="{{ Request::is('admin/booking*') ? 'active' : '' }}">
                     <i class="fas fa-calendar-check"></i>
                     <span>Bookings</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.report') }}">
+                <a href="{{ route('admin.report') }}" class="{{ Request::is('admin/report*') ? 'active' : '' }}">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reports</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.penalty') }}">
+                <a href="{{ route('admin.penalty') }}" class="{{ Request::is('admin/penalty*') ? 'active' : '' }}">
                     <i class="fas fa-exclamation-triangle"></i>
                     <span>Penalty</span>
                 </a>
@@ -693,7 +693,7 @@
         
         <div class="user-profile">
             <div class="user-avatar">AD</div>
-            <div class="user-name">{{ session('admin_name', 'Admin User') }}</div>
+            <div class="user-name">{{ session('admin_name', 'Admin') }}</div>
             <div class="user-role">Super Administrator</div>
         </div>
     </div>
@@ -754,12 +754,8 @@
                         <div class="stats-icon">
                             <i class="fas fa-dumbbell"></i>
                         </div>
-                        <h3>156</h3>
+                        <h3>{{ $stats['total_equipment'] }}</h3>
                         <p>Total Equipment</p>
-                        <div class="stats-trend trend-up">
-                            <i class="fas fa-arrow-up trend-icon"></i>
-                            <span>12% from last month</span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -769,12 +765,8 @@
                         <div class="stats-icon">
                             <i class="fas fa-hourglass-half"></i>
                         </div>
-                        <h3>12</h3>
+                        <h3>{{ $stats['pending_requests'] }}</h3>
                         <p>Pending Requests</p>
-                        <div class="stats-trend trend-down">
-                            <i class="fas fa-arrow-down trend-icon"></i>
-                            <span>5% from last week</span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -784,12 +776,8 @@
                         <div class="stats-icon">
                             <i class="fas fa-check-circle"></i>
                         </div>
-                        <h3>62</h3>
+                        <h3>{{ $stats['approved_today'] }}</h3>
                         <p>Approved Today</p>
-                        <div class="stats-trend trend-up">
-                            <i class="fas fa-arrow-up trend-icon"></i>
-                            <span>18% from yesterday</span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -799,12 +787,8 @@
                         <div class="stats-icon">
                             <i class="fas fa-undo-alt"></i>
                         </div>
-                        <h3>80</h3>
-                        <p>Items Returned</p>
-                        <div class="stats-trend trend-up">
-                            <i class="fas fa-arrow-up trend-icon"></i>
-                            <span>8% from last week</span>
-                        </div>
+                        <h3>{{ $stats['returned_today'] }}</h3>
+                        <p>Items Returned Today</p>
                     </div>
                 </div>
             </div>
@@ -818,12 +802,8 @@
                         <div class="stats-icon">
                             <i class="fas fa-users"></i>
                         </div>
-                        <h3>128</h3>
-                        <p>Active Users</p>
-                        <div class="stats-trend trend-up">
-                            <i class="fas fa-arrow-up trend-icon"></i>
-                            <span>22% from last month</span>
-                        </div>
+                        <h3>{{ $stats['active_users'] }}</h3>
+                        <p>Active Students</p>
                     </div>
                 </div>
             </div>
@@ -833,12 +813,8 @@
                         <div class="stats-icon">
                             <i class="fas fa-rupee-sign"></i>
                         </div>
-                        <h3>₹4,850</h3>
+                        <h3>₹{{ number_format($stats['penalty_collected']) }}</h3>
                         <p>Penalty Collected</p>
-                        <div class="stats-trend trend-up">
-                            <i class="fas fa-arrow-up trend-icon"></i>
-                            <span>15% from last month</span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -917,142 +893,43 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @foreach($recent_bookings as $booking)
                             <tr>
-                                <td>#001</td>
+                                <td>#{{ str_pad($booking->id, 3, '0', STR_PAD_LEFT) }}</td>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px;">
-                                            <i class="fas fa-user"></i>
+                                            {{ substr($booking->user->name ?? 'U', 0, 1) }}
                                         </div>
                                         <div>
-                                            <strong>Amit Patel</strong>
-                                            <div class="text-muted small">STU002</div>
+                                            <strong>{{ $booking->user->name ?? 'Unknown' }}</strong>
+                                            <div class="text-muted small">{{ $booking->user->email ?? '' }}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td>Football</td>
-                                <td>Outdoor</td>
-                                <td>1</td>
-                                <td>10-Feb-2026</td>
+                                <td>{{ $booking->equipment->name ?? 'N/A' }}</td>
+                                <td>{{ $booking->equipment->category ?? 'N/A' }}</td>
+                                <td>{{ $booking->quantity }}</td>
+                                <td>{{ date('d-M-Y', strtotime($booking->booking_date)) }}</td>
                                 <td>
-                                    <span class="status-badge status-pending">Pending</span>
+                                    <span class="status-badge status-{{ $booking->status }}">{{ ucfirst($booking->status) }}</span>
                                 </td>
                                 <td>
-                                    <button class="btn btn-sm btn-success me-1" onclick="updateBookingStatus('001', 'approved')">
-                                        <i class="fas fa-check"></i> Approve
+                                    @if($booking->status == 'pending')
+                                    <button class="btn btn-sm btn-success me-1" onclick="updateBookingStatus('{{ $booking->id }}', 'approved')">
+                                        <i class="fas fa-check"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-danger" onclick="updateBookingStatus('001', 'rejected')">
-                                        <i class="fas fa-times"></i> Reject
+                                    <button class="btn btn-sm btn-danger" onclick="updateBookingStatus('{{ $booking->id }}', 'rejected')">
+                                        <i class="fas fa-times"></i>
                                     </button>
+                                    @else
+                                    <a href="{{ route('admin.booking') }}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    @endif
                                 </td>
                             </tr>
-                            <tr>
-                                <td>#002</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px;">
-                                            <i class="fas fa-user"></i>
-                                        </div>
-                                        <div>
-                                            <strong>Rahul Sharma</strong>
-                                            <div class="text-muted small">STU001</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>Cricket Bat</td>
-                                <td>Outdoor</td>
-                                <td>2</td>
-                                <td>09-Feb-2026</td>
-                                <td>
-                                    <span class="status-badge status-approved">Approved</span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-info" onclick="viewBookingDetails('002')">
-                                        <i class="fas fa-eye"></i> View
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#003</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px;">
-                                            <i class="fas fa-user"></i>
-                                        </div>
-                                        <div>
-                                            <strong>Neha Verma</strong>
-                                            <div class="text-muted small">STU003</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>Badminton Racket</td>
-                                <td>Indoor</td>
-                                <td>1</td>
-                                <td>08-Feb-2026</td>
-                                <td>
-                                    <span class="status-badge status-collected">Collected</span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-secondary" onclick="updateBookingStatus('003', 'returned')">
-                                        <i class="fas fa-undo-alt"></i> Mark Returned
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#004</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px;">
-                                            <i class="fas fa-user"></i>
-                                        </div>
-                                        <div>
-                                            <strong>Priya Singh</strong>
-                                            <div class="text-muted small">STU004</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>Basketball</td>
-                                <td>Outdoor</td>
-                                <td>1</td>
-                                <td>07-Feb-2026</td>
-                                <td>
-                                    <span class="status-badge status-returned">Returned</span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-success" onclick="completeBooking('004')">
-                                        <i class="fas fa-flag-checkered"></i> Complete
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>#005</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 36px; height: 36px;">
-                                            <i class="fas fa-user"></i>
-                                        </div>
-                                        <div>
-                                            <strong>Raj Kumar</strong>
-                                            <div class="text-muted small">STU005</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>Tennis Racket</td>
-                                <td>Outdoor</td>
-                                <td>1</td>
-                                <td>06-Feb-2026</td>
-                                <td>
-                                    <span class="status-badge status-pending">Pending</span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-success me-1" onclick="updateBookingStatus('005', 'approved')">
-                                        <i class="fas fa-check"></i> Approve
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" onclick="updateBookingStatus('005', 'rejected')">
-                                        <i class="fas fa-times"></i> Reject
-                                    </button>
-                                </td>
-                            </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -1106,15 +983,17 @@
         });
         
         function initializeCharts() {
+            const chartData = @json($chart_data);
+            
             // Booking Trend Chart
             const trendCtx = document.getElementById('bookingTrendChart').getContext('2d');
             bookingTrendChart = new Chart(trendCtx, {
                 type: 'line',
                 data: {
-                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    labels: chartData.bookings_labels,
                     datasets: [{
                         label: 'Bookings',
-                        data: [12, 19, 8, 15, 22, 18, 25],
+                        data: chartData.bookings_counts,
                         borderColor: '#4361ee',
                         backgroundColor: 'rgba(67, 97, 238, 0.1)',
                         borderWidth: 3,
@@ -1146,31 +1025,17 @@
                 }
             });
             
-            // Equipment Usage Chart
+            // Equipment Usage Chart (By Category)
             const usageCtx = document.getElementById('equipmentUsageChart').getContext('2d');
             equipmentUsageChart = new Chart(usageCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['Cricket', 'Football', 'Badminton', 'Basketball', 'Tennis', 'Other'],
+                    labels: chartData.categories.map(c => c.category),
                     datasets: [{
-                        label: 'Times Used',
-                        data: [45, 38, 28, 22, 18, 12],
-                        backgroundColor: [
-                            'rgba(67, 97, 238, 0.7)',
-                            'rgba(76, 201, 240, 0.7)',
-                            'rgba(248, 150, 30, 0.7)',
-                            'rgba(247, 37, 133, 0.7)',
-                            'rgba(46, 204, 113, 0.7)',
-                            'rgba(155, 89, 182, 0.7)'
-                        ],
-                        borderColor: [
-                            '#4361ee',
-                            '#4cc9f0',
-                            '#f8961e',
-                            '#f72585',
-                            '#2ecc71',
-                            '#9b59b6'
-                        ],
+                        label: 'Equipment Count',
+                        data: chartData.categories.map(c => c.count),
+                        backgroundColor: 'rgba(67, 97, 238, 0.7)',
+                        borderColor: '#4361ee',
                         borderWidth: 1
                     }]
                 },
@@ -1181,42 +1046,21 @@
                         legend: {
                             display: false
                         }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: {
-                                color: 'rgba(0,0,0,0.05)'
-                            }
-                        },
-                        x: {
-                            grid: {
-                                color: 'rgba(0,0,0,0.05)'
-                            }
-                        }
                     }
                 }
             });
             
-            // Status Chart
+            // Status Chart (Simplified)
             const statusCtx = document.getElementById('statusChart').getContext('2d');
             statusChart = new Chart(statusCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Pending', 'Approved', 'Collected', 'Returned'],
+                    labels: ['Pending', 'Active'],
                     datasets: [{
-                        data: [12, 62, 28, 80],
+                        data: [{{ $stats['pending_requests'] }}, {{ $stats['active_rentals'] }}],
                         backgroundColor: [
                             'rgba(248, 150, 30, 0.7)',
-                            'rgba(46, 204, 113, 0.7)',
-                            'rgba(67, 97, 238, 0.7)',
-                            'rgba(155, 89, 182, 0.7)'
-                        ],
-                        borderColor: [
-                            '#f8961e',
-                            '#2ecc71',
-                            '#4361ee',
-                            '#9b59b6'
+                            'rgba(67, 97, 238, 0.7)'
                         ],
                         borderWidth: 2,
                         borderColor: '#fff'
@@ -1235,23 +1079,32 @@
         }
         
         function updateBookingStatus(bookingId, status) {
-            const statusMap = {
-                'approved': {class: 'status-approved', text: 'Approved'},
-                'rejected': {class: 'status-danger', text: 'Rejected'},
-                'collected': {class: 'status-collected', text: 'Collected'},
-                'returned': {class: 'status-returned', text: 'Returned'}
-            };
-            
-            // Find the booking row (in real app, this would be dynamic)
-            showAlert(`Booking #${bookingId} status updated to ${statusMap[status]?.text || status}`, 'success');
-            
-            // Update stats cards (simulated)
-            if (status === 'approved') {
-                updateStatCard(3, '+1'); // Approved count
-                updateStatCard(2, '-1'); // Pending count
-            } else if (status === 'returned') {
-                updateStatCard(4, '+1'); // Returned count
-            }
+            if (!confirm(`Are you sure you want to mark this booking as ${status}?`)) return;
+
+            fetch('{{ route("admin.booking.update-status") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    booking_id: bookingId,
+                    status: status
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showAlert(data.message || 'Failed to update status', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('An error occurred while updating status', 'danger');
+            });
         }
         
         function updateStatCard(cardIndex, change) {

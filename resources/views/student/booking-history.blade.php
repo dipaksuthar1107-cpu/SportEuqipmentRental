@@ -23,9 +23,9 @@
         <div class="sidebar-header">
             <div class="student-info">
                 <div class="student-avatar">
-                    {{ strtoupper(substr(session('student_name', 'Student'), 0, 2)) }}
+                    {{ strtoupper(substr($student_name ?? 'Student', 0, 2)) }}
                 </div>
-                <h5>{{ session('student_name', 'Student') }}</h5>
+                <h5>{{ $student_name ?? 'Student' }}</h5>
                 <p>Student Account</p>
             </div>
         </div>
@@ -38,7 +38,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.equipment-list') }}">
+                <a href="{{ route('student.equipment-list') }}" class="{{ Request::is('student/equipment-list*') || Request::is('student/equipment-detail*') ? 'active' : '' }}">
                     <i class="fas fa-basketball-ball"></i>
                     <span>Equipment List</span>
                 </a>
@@ -56,13 +56,13 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.filter') }}">
+                <a href="{{ route('student.equipment-list') }}">
                     <i class="fas fa-filter"></i>
                     <span>Filter Equipment</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.request-book') }}">
+                <a href="{{ route('student.equipment-list') }}">
                     <i class="fas fa-plus-circle"></i>
                     <span>Request Equipment</span>
                 </a>
@@ -136,21 +136,21 @@
         <div class="history-container" id="historyContainer">
             <?php foreach ($history as $item): ?>
             <div class="history-card" 
-                 data-equipment="<?php echo strtolower($item['equipment']); ?>"
-                 data-category="<?php echo strtolower($item['category']); ?>"
-                 data-feedback="<?php echo $item['feedback']; ?>">
+                 data-equipment="<?php echo strtolower($item->equipment->name ?? 'N/A'); ?>"
+                 data-category="<?php echo strtolower($item->equipment->category ?? 'General'); ?>"
+                 data-feedback="<?php echo 'pending'; ?>">
                 <div class="history-header">
                     <div class="history-title">
                         <div class="history-icon">
-                            <i class="<?php echo $item['icon']; ?>"></i>
+                            <i class="<?php echo $item->equipment->icon ?? 'fas fa-dumbbell'; ?>"></i>
                         </div>
                         <div class="history-details">
-                            <h5><?php echo $item['equipment']; ?></h5>
-                            <p><?php echo $item['category']; ?></p>
+                            <h5><?php echo $item->equipment->name ?? 'N/A'; ?></h5>
+                            <p><?php echo $item->equipment->category ?? 'General'; ?></p>
                         </div>
                     </div>
                     <span class="badge" style="background: rgba(0, 201, 167, 0.1); color: var(--accent); padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600;">
-                        Completed
+                        {{ ucfirst($item->status) }}
                     </span>
                 </div>
                 
@@ -158,27 +158,27 @@
                     <div class="history-info">
                         <div class="info-item">
                             <span class="info-label">Booking ID</span>
-                            <span class="info-value">#BH-<?php echo str_pad($item['id'], 3, '0', STR_PAD_LEFT); ?></span>
+                            <span class="info-value">#BH-<?php echo str_pad($item->id, 3, '0', STR_PAD_LEFT); ?></span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Quantity</span>
-                            <span class="info-value"><?php echo $item['quantity']; ?> items</span>
+                            <span class="info-value"><?php echo $item->quantity; ?> items</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Booked Date</span>
-                            <span class="info-value"><?php echo $item['booked_date']; ?></span>
+                            <span class="info-value"><?php echo $item->created_at->format('Y-m-d'); ?></span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Pickup Date</span>
-                            <span class="info-value"><?php echo $item['pickup_date']; ?></span>
+                            <span class="info-value"><?php echo $item->booking_date; ?></span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Returned Date</span>
-                            <span class="info-value"><?php echo $item['returned_date']; ?></span>
+                            <span class="info-value"><?php echo $item->return_date; ?></span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Deposit</span>
-                            <span class="info-value"><?php echo $item['deposit']; ?></span>
+                            <span class="info-value">₹<?php echo $item->equipment->deposit ?? '0'; ?></span>
                         </div>
                     </div>
                     
@@ -186,44 +186,23 @@
                         <div class="feedback-header">
                             <div>
                                 <strong>Feedback Status:</strong>
-                                <span class="badge <?php echo $item['feedback'] == 'submitted' ? 'bg-success' : 'bg-warning'; ?>" style="margin-left: 0.5rem;">
-                                    <?php echo ucfirst($item['feedback']); ?>
+                                <span class="badge bg-warning" style="margin-left: 0.5rem;">
+                                    Pending
                                 </span>
                             </div>
                             <div class="rating-display">
-                                <?php if ($item['rating']): ?>
-                                <div class="stars">
-                                    <?php for ($i = 1; $i <= 5; $i++): ?>
-                                        <?php if ($i <= $item['rating']): ?>
-                                            <i class="fas fa-star"></i>
-                                        <?php else: ?>
-                                            <i class="far fa-star"></i>
-                                        <?php endif; ?>
-                                    <?php endfor; ?>
-                                </div>
-                                <span><?php echo $item['rating']; ?>/5</span>
-                                <?php else: ?>
                                 <span class="no-rating">No rating yet</span>
-                                <?php endif; ?>
                             </div>
                         </div>
-                        <?php if ($item['feedback_date']): ?>
-                        <p class="mb-0" style="font-size: 0.85rem; color: #666;">
-                            <i class="far fa-calendar me-1"></i>
-                            Feedback submitted on <?php echo $item['feedback_date']; ?>
-                        </p>
-                        <?php endif; ?>
                     </div>
                     
                     <div class="history-actions">
-                        <button class="btn-action btn-view" onclick="viewHistoryDetails(<?php echo $item['id']; ?>)">
+                        <button class="btn-action btn-view" onclick="viewHistoryDetails(<?php echo $item->id; ?>)">
                             <i class="fas fa-eye"></i> View Details
                         </button>
-                        <?php if ($item['feedback'] == 'pending'): ?>
-                        <button class="btn-action btn-feedback" onclick="submitFeedback(<?php echo $item['id']; ?>)">
+                        <button class="btn-action btn-feedback" onclick="submitFeedback(<?php echo $item->id; ?>)">
                             <i class="fas fa-star"></i> Give Feedback
                         </button>
-                        <?php endif; ?>
                     </div>
                 </div>
             </div>

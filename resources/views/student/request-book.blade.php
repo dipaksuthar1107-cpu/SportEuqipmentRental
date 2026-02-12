@@ -23,9 +23,9 @@
         <div class="sidebar-header">
             <div class="student-info">
                 <div class="student-avatar">
-                    {{ strtoupper(substr(session('student_name', 'Student'), 0, 2)) }}
+                    {{ strtoupper(substr($student_name ?? 'Student', 0, 2)) }}
                 </div>
-                <h5>{{ session('student_name', 'Student') }}</h5>
+                <h5>{{ $student_name ?? 'Student' }}</h5>
                 <p>Student Account</p>
             </div>
         </div>
@@ -38,7 +38,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.equipment-list') }}">
+                <a href="{{ route('student.equipment-list') }}" class="{{ Request::is('student/equipment-list*') || Request::is('student/equipment-detail*') ? 'active' : '' }}">
                     <i class="fas fa-basketball-ball"></i>
                     <span>Equipment List</span>
                 </a>
@@ -56,13 +56,13 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.filter') }}">
+                <a href="{{ route('student.equipment-list') }}">
                     <i class="fas fa-filter"></i>
                     <span>Filter Equipment</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.request-book') }}" class="active">
+                <a href="{{ route('student.equipment-list') }}" class="active">
                     <i class="fas fa-plus-circle"></i>
                     <span>Request Equipment</span>
                 </a>
@@ -93,7 +93,7 @@
         <!-- Equipment Info -->
         <div class="equipment-info">
             <div class="equipment-details">
-                <h4>Requesting: <?php echo htmlspecialchars($equipment_name); ?></h4>
+                <h4>Requesting: {{ $equipment->name }}</h4>
                 <p>Complete the form below to submit your booking request</p>
             </div>
             <div class="equipment-badge">
@@ -113,6 +113,8 @@
             
             <div class="request-body">
                 <form id="requestForm">
+                    @csrf
+                    <input type="hidden" id="equipment_id" value="{{ $equipment->id }}">
                     <!-- Equipment Details -->
                     <div class="form-group">
                         <label class="form-label">Equipment</label>
@@ -120,7 +122,7 @@
                             <span class="input-group-text">
                                 <i class="fas fa-dumbbell"></i>
                             </span>
-                            <input type="text" class="form-control" value="<?php echo htmlspecialchars($equipment_name); ?>" readonly>
+                            <input type="text" class="form-control" value="{{ $equipment->name }}" readonly>
                         </div>
                         <div class="form-text">If you want to request different equipment, go back to the equipment list</div>
                     </div>
@@ -133,9 +135,9 @@
                                 <span class="input-group-text">
                                     <i class="fas fa-boxes"></i>
                                 </span>
-                                <input type="number" class="form-control" id="quantity" min="1" max="5" value="1" required>
+                                <input type="number" class="form-control" id="quantity" min="1" max="{{ $equipment->available }}" value="1" required>
                             </div>
-                            <div class="form-text">Maximum 5 items per request</div>
+                            <div class="form-text">Maximum {{ $equipment->available }} items available</div>
                         </div>
                         
                         <div class="form-group">
@@ -236,12 +238,17 @@
                             Rental Rules & Agreement
                         </div>
                         <ul class="rules-list">
-                            <li>Equipment must be returned in the same condition</li>
-                            <li>Late returns will incur penalty fees (₹100/day)</li>
-                            <li>Damage to equipment will result in deposit forfeiture</li>
-                            <li>Student ID must be presented at pickup</li>
+                            @if($equipment->rules)
+                                @foreach($equipment->rules as $rule)
+                                <li>{{ $rule }}</li>
+                                @endforeach
+                            @else
+                                <li>Equipment must be returned in the same condition</li>
+                                <li>Late returns will incur penalty fees (₹{{ $equipment->daily_rate ?? '100' }}/day)</li>
+                                <li>Damage to equipment will result in deposit forfeiture</li>
+                                <li>Student ID must be presented at pickup</li>
+                            @endif
                             <li>Booking approval takes 24-48 hours</li>
-                            <li>You will receive SMS/Email confirmation</li>
                         </ul>
                         <div class="form-check mt-3">
                             <input class="form-check-input" type="checkbox" id="agreeRules" required>
@@ -256,7 +263,7 @@
                         <button type="submit" class="btn-submit">
                             <i class="fas fa-paper-plane"></i> Submit Request
                         </button>
-                        <a href="equipment-list.php" class="btn-cancel">
+                        <a href="{{ route('student.equipment-list') }}" class="btn-cancel">
                             <i class="fas fa-times"></i> Cancel
                         </a>
                     </div>
@@ -266,7 +273,7 @@
         
         <!-- Footer -->
         <div class="footer">
-            <p class="mb-0">© <?php echo date("Y"); ?> Sports Equipment Rental Portal | Request Equipment</p>
+            <p class="mb-0">© {{ date("Y") }} Sports Equipment Rental Portal | Request Equipment</p>
         </div>
     </div>
 

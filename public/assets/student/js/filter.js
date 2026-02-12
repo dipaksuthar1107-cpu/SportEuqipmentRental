@@ -126,12 +126,12 @@ function resetFilters() {
 
 // View equipment details
 function viewEquipment(equipmentId) {
-    window.location.href = `equipment-details.php?id=${equipmentId}`;
+    window.location.href = `/student/equipment-detail/${equipmentId}`;
 }
 
 // Request equipment
 function requestEquipment(equipmentId) {
-    alert(`Requesting equipment #${equipmentId}\n\nThis would open a booking form in a real application.`);
+    window.location.href = `/student/request-book/${equipmentId}`;
 }
 
 // Add hover effects to equipment cards

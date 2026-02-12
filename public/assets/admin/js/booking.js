@@ -32,72 +32,38 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Update booking status
 function updateStatus(bookingId, status) {
-    const bookingRow = document.getElementById(`booking-${bookingId}`);
-    const statusCell = bookingRow.querySelector('td:nth-child(8)');
-    const actionCell = bookingRow.querySelector('td:nth-child(9)');
+    if (!confirm(`Are you sure you want to mark this booking as ${status}?`)) return;
 
-    const statusMap = {
-        'pending': { class: 'status-pending', text: 'Pending' },
-        'approved': { class: 'status-approved', text: 'Approved' },
-        'collected': { class: 'status-collected', text: 'Collected' },
-        'returned': { class: 'status-returned', text: 'Returned' },
-        'rejected': { class: 'status-rejected', text: 'Rejected' }
-    };
+    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    // Update status badge
-    statusCell.innerHTML = `<span class="status-badge ${statusMap[status].class}">${statusMap[status].text}</span>`;
-
-    // Update action buttons based on status
-    let actionButtons = '';
-
-    if (status === 'approved') {
-        actionButtons = `
-            <button class="btn btn-sm btn-info me-1" onclick="updateStatus(${bookingId}, 'collected')" data-bs-toggle="tooltip" title="Mark as Collected">
-                <i class="fas fa-box-open"></i>
-            </button>
-            <button class="btn btn-sm btn-warning" onclick="editBooking(${bookingId})" data-bs-toggle="tooltip" title="Edit">
-                <i class="fas fa-edit"></i>
-            </button>
-        `;
-    } else if (status === 'collected') {
-        actionButtons = `
-            <button class="btn btn-sm btn-secondary me-1" onclick="updateStatus(${bookingId}, 'returned')" data-bs-toggle="tooltip" title="Mark as Returned">
-                <i class="fas fa-undo-alt"></i>
-            </button>
-            <button class="btn btn-sm btn-warning" onclick="editBooking(${bookingId})" data-bs-toggle="tooltip" title="Edit">
-                <i class="fas fa-edit"></i>
-            </button>
-        `;
-    } else if (status === 'returned') {
-        actionButtons = `
-            <button class="btn btn-sm btn-success me-1" onclick="completeBooking(${bookingId})" data-bs-toggle="tooltip" title="Complete">
-                <i class="fas fa-flag-checkered"></i>
-            </button>
-            <button class="btn btn-sm btn-info" onclick="viewBookingDetails(${bookingId})" data-bs-toggle="tooltip" title="View Details">
-                <i class="fas fa-eye"></i>
-            </button>
-        `;
-    } else if (status === 'rejected') {
-        actionButtons = `
-            <button class="btn btn-sm btn-warning me-1" onclick="editBooking(${bookingId})" data-bs-toggle="tooltip" title="Edit">
-                <i class="fas fa-edit"></i>
-            </button>
-            <button class="btn btn-sm btn-danger" onclick="deleteBooking(${bookingId})" data-bs-toggle="tooltip" title="Delete">
-                <i class="fas fa-trash"></i>
-            </button>
-        `;
-    }
-
-    actionCell.innerHTML = actionButtons;
-
-    // Show success message
-    showAlert(`Booking #${bookingId} status updated to ${statusMap[status].text}`, 'success');
-
-    // Reinitialize tooltips for new buttons
-    var tooltipTriggerList = [].slice.call(actionCell.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
+    fetch('/admin/booking/update-status', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': token,
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            booking_id: bookingId,
+            status: status
+        })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert(data.message, 'success');
+                // Reload page to update table and stats
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                showAlert(data.message || 'Error updating status', 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('An error occurred. Please try again.', 'danger');
+        });
 }
 
 // View booking details
@@ -221,9 +187,45 @@ function showAlert(message, type) {
 
 // Export functionality
 document.getElementById('exportBtn').addEventListener('click', function () {
-    showAlert('Exporting booking data...', 'info');
-    // In real app, this would generate and download a CSV/Excel file
+    const table = document.getElementById('bookingTable');
+    if (!table) return;
+
+    const rows = Array.from(table.querySelectorAll('tr'));
+    if (rows.length === 0) return;
+
+    showAlert('Preparing booking export...', 'info');
+
+    const csvContent = rows.map(row => {
+        const cells = Array.from(row.querySelectorAll('th, td'));
+        // Skip Actions column
+        const rowData = cells.slice(0, -1).map(cell => {
+            let text = cell.innerText.replace(/\n/g, ' ').trim();
+            if (text.includes(',') || text.includes('"')) {
+                text = `"${text.replace(/"/g, '""')}"`;
+            }
+            return text;
+        });
+        return rowData.join(',');
+    }).join('\n');
+
+    downloadCSV('bookings_export.csv', csvContent);
 });
+
+// Helper function to download CSV
+function downloadCSV(filename, content) {
+    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showAlert(`${filename} downloaded successfully!`, 'success');
+    }
+}
 
 // Add animation to cards on load
 document.addEventListener('DOMContentLoaded', function () {

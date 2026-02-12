@@ -23,9 +23,9 @@
         <div class="sidebar-header">
             <div class="student-info">
                 <div class="student-avatar">
-                    {{ strtoupper(substr(session('student_name', 'Student'), 0, 2)) }}
+                    {{ strtoupper(substr($student_name ?? 'Student', 0, 2)) }}
                 </div>
-                <h5>{{ session('student_name', 'Student') }}</h5>
+                <h5>{{ $student_name ?? 'Student' }}</h5>
                 <p>Student Account</p>
             </div>
         </div>
@@ -38,7 +38,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.equipment-list') }}">
+                <a href="{{ route('student.equipment-list') }}" class="{{ Request::is('student/equipment-list*') || Request::is('student/equipment-detail*') ? 'active' : '' }}">
                     <i class="fas fa-basketball-ball"></i>
                     <span>Equipment List</span>
                 </a>
@@ -56,9 +56,9 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.request-book') }}">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>Request Equipment</span>
+                <a href="{{ route('student.equipment-list') }}">
+                    <i class="fas fa-filter"></i>
+                    <span>Filter Equipment</span>
                 </a>
             </li>
             <li>
@@ -85,7 +85,7 @@
                 <p>Track and manage all your equipment rental bookings</p>
             </div>
             <div class="text-end">
-                <a href="request-book.php" class="btn btn-light">
+                <a href="{{ route('student.request-book') }}" class="btn btn-light">
                     <i class="fas fa-plus me-2"></i> New Booking
                 </a>
             </div>
@@ -150,19 +150,19 @@
         <!-- Booking Cards -->
         <div class="booking-cards" id="bookingCards">
             <?php foreach ($bookings as $booking): ?>
-            <div class="booking-card <?php echo $booking['status']; ?>" data-status="<?php echo $booking['status']; ?>">
+            <div class="booking-card <?php echo $booking->status; ?>" data-status="<?php echo $booking->status; ?>">
                 <div class="booking-header">
                     <div class="booking-title">
                         <div class="booking-icon">
-                            <i class="<?php echo $booking['icon']; ?>"></i>
+                            <i class="<?php echo $booking->equipment->icon ?? 'fas fa-dumbbell'; ?>"></i>
                         </div>
                         <div class="booking-details">
-                            <h5><?php echo $booking['equipment']; ?></h5>
-                            <p><?php echo $booking['category']; ?></p>
+                            <h5><?php echo $booking->equipment->name ?? 'N/A'; ?></h5>
+                            <p><?php echo $booking->equipment->category ?? 'General'; ?></p>
                         </div>
                     </div>
-                    <span class="status-badge badge-<?php echo $booking['status']; ?>">
-                        <?php echo ucfirst($booking['status']); ?>
+                    <span class="status-badge badge-<?php echo $booking->status; ?>">
+                        <?php echo ucfirst($booking->status); ?>
                     </span>
                 </div>
                 
@@ -170,36 +170,36 @@
                     <div class="booking-info">
                         <div class="info-item">
                             <span class="info-label">Booking ID</span>
-                            <span class="info-value">#BK-<?php echo str_pad($booking['id'], 3, '0', STR_PAD_LEFT); ?></span>
+                            <span class="info-value">#BK-<?php echo str_pad($booking->id, 3, '0', STR_PAD_LEFT); ?></span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Quantity</span>
-                            <span class="info-value"><?php echo $booking['quantity']; ?> items</span>
+                            <span class="info-value"><?php echo $booking->quantity; ?> items</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Booking Date</span>
-                            <span class="info-value"><?php echo $booking['booking_date']; ?></span>
+                            <span class="info-value"><?php echo $booking->booking_date; ?></span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Pickup Date</span>
-                            <span class="info-value"><?php echo $booking['pickup_date']; ?></span>
+                            <span class="info-value"><?php echo $booking->booking_date; ?></span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Return Date</span>
-                            <span class="info-value"><?php echo $booking['return_date']; ?></span>
+                            <span class="info-value"><?php echo $booking->return_date; ?></span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Deposit</span>
-                            <span class="info-value"><?php echo $booking['deposit']; ?></span>
+                            <span class="info-value">₹<?php echo $booking->equipment->deposit ?? '0'; ?></span>
                         </div>
                     </div>
                     
                     <div class="booking-actions">
-                        <button class="btn-action btn-view" onclick="viewBookingDetails(<?php echo $booking['id']; ?>)">
+                        <button class="btn-action btn-view" onclick="viewBookingDetails(<?php echo $booking->id; ?>)">
                             <i class="fas fa-eye"></i> View Details
                         </button>
-                        <?php if ($booking['status'] == 'pending' || $booking['status'] == 'approved'): ?>
-                        <button class="btn-action btn-cancel" onclick="cancelBooking(<?php echo $booking['id']; ?>)">
+                        <?php if ($booking->status == 'pending' || $booking->status == 'approved'): ?>
+                        <button class="btn-action btn-cancel" onclick="cancelBooking(<?php echo $booking->id; ?>)">
                             <i class="fas fa-times"></i> Cancel
                         </button>
                         <?php endif; ?>

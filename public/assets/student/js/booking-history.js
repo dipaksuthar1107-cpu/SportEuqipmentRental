@@ -81,14 +81,7 @@ function viewHistoryDetails(historyId) {
 
 // Submit feedback
 function submitFeedback(historyId) {
-    const rating = prompt('Rate this equipment (1-5 stars):');
-    if (rating && rating >= 1 && rating <= 5) {
-        const comment = prompt('Any comments about your experience (optional):');
-        alert('Thank you for your feedback!\n\nRating: ' + rating + ' stars\n' + (comment ? 'Comment: ' + comment : ''));
-        // In real app, submit to server and update UI
-    } else if (rating !== null) {
-        alert('Please enter a valid rating between 1 and 5.');
-    }
+    window.location.href = '/student/feedback/' + historyId;
 }
 
 // Add hover effects to history cards

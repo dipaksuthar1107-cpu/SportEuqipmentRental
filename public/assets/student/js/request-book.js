@@ -95,18 +95,43 @@ document.getElementById('requestForm').addEventListener('submit', function (e) {
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Submitting...';
     submitBtn.disabled = true;
 
-    // Simulate API call
-    setTimeout(() => {
-        // Show success message
-        alert(`Booking request submitted successfully!\n\nEquipment: ${equipment}\nQuantity: ${quantity}\nPickup: ${pickupDate} at ${pickupTime}\n\nYou will receive confirmation via SMS/Email within 24-48 hours.`);
+    // AJAX Call
+    const formData = {
+        _token: document.querySelector('input[name="_token"]').value,
+        equipment_id: document.getElementById('equipment_id').value,
+        quantity: quantity,
+        duration: duration,
+        pickup_date: pickupDate,
+        pickup_time: pickupTime,
+        purpose: document.getElementById('purpose').value
+    };
 
-        // Reset button
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-
-        // Redirect to booking status page
-        window.location.href = 'booking-status.php';
-    }, 1500);
+    fetch('/student/request-book', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': formData._token,
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                window.location.href = data.redirect;
+            } else {
+                alert(data.message || 'Something went wrong. Please try again.');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        });
 });
 
 // Quantity validation

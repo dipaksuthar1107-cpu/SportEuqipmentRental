@@ -24,31 +24,31 @@
         
         <ul class="sidebar-menu">
             <li>
-                <a href="{{ route('admin.dashboard') }}">
+                <a href="{{ route('admin.dashboard') }}" class="{{ Request::is('admin/dashboard*') ? 'active' : '' }}">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.equipment') }}" class="active">
+                <a href="{{ route('admin.equipment') }}" class="{{ Request::is('admin/equipment*') ? 'active' : '' }}">
                     <i class="fas fa-dumbbell"></i>
                     <span>Equipment</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.booking') }}">
+                <a href="{{ route('admin.booking') }}" class="{{ Request::is('admin/booking*') ? 'active' : '' }}">
                     <i class="fas fa-calendar-check"></i>
                     <span>Bookings</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.report') }}">
+                <a href="{{ route('admin.report') }}" class="{{ Request::is('admin/report*') ? 'active' : '' }}">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reports</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.penalty') }}">
+                <a href="{{ route('admin.penalty') }}" class="{{ Request::is('admin/penalty*') ? 'active' : '' }}">
                     <i class="fas fa-exclamation-triangle"></i>
                     <span>Penalty</span>
                 </a>
@@ -63,7 +63,7 @@
         
         <div class="user-profile">
             <div class="user-avatar">AD</div>
-            <div class="user-name">{{ session('admin_name', 'Admin User') }}</div>
+            <div class="user-name">{{ session('admin_name', 'Admin') }}</div>
             <div class="user-role">Super Administrator</div>
         </div>
     </div>
@@ -87,28 +87,28 @@
             <div class="col-md-3">
                 <div class="stats-card stats-1">
                     <i class="fas fa-dumbbell"></i>
-                    <h3 id="totalEquipment">156</h3>
+                    <h3 id="totalEquipment">{{ $equipment->sum('quantity') }}</h3>
                     <p>Total Equipment</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stats-card stats-2">
                     <i class="fas fa-check-circle"></i>
-                    <h3 id="availableEquipment">128</h3>
+                    <h3 id="availableEquipment">{{ $equipment->sum('available') }}</h3>
                     <p>Available Now</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stats-card stats-3">
                     <i class="fas fa-tools"></i>
-                    <h3 id="maintenanceEquipment">18</h3>
+                    <h3 id="maintenanceEquipment">0</h3>
                     <p>Under Maintenance</p>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="stats-card stats-4">
                     <i class="fas fa-users"></i>
-                    <h3 id="rentedEquipment">42</h3>
+                    <h3 id="rentedEquipment">{{ $equipment->sum('quantity') - $equipment->sum('available') }}</h3>
                     <p>Active Rentals</p>
                 </div>
             </div>
@@ -121,17 +121,18 @@
             </div>
             <div class="card-body">
                 <form id="addEquipmentForm">
+                    @csrf
                     <div class="row g-3">
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="form-label">Equipment Name</label>
-                                <input type="text" class="form-control" id="equipmentName" placeholder="Enter equipment name" required>
+                                <input type="text" class="form-control" name="name" placeholder="Enter equipment name" required>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="form-label">Category</label>
-                                <select class="form-select" id="equipmentCategory" required>
+                                <select class="form-select" name="category" required>
                                     <option value="">Select Category</option>
                                     <option value="indoor">Indoor</option>
                                     <option value="outdoor">Outdoor</option>
@@ -142,23 +143,37 @@
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <label class="form-label">Quantity</label>
-                                <input type="number" class="form-control" id="equipmentQuantity" placeholder="Qty" min="1" required>
+                                <label class="form-label">Total Qty</label>
+                                <input type="number" class="form-control" name="quantity" placeholder="Qty" min="1" required>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <label class="form-label">Condition</label>
-                                <select class="form-select" id="equipmentCondition">
-                                    <option value="excellent">Excellent</option>
-                                    <option value="good">Good</option>
-                                    <option value="average">Average</option>
-                                </select>
+                                <label class="form-label">Deposit (₹)</label>
+                                <input type="number" class="form-control" name="deposit" placeholder="₹" min="0" required>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="form-label">Daily Rate (₹)</label>
+                                <input type="number" class="form-control" name="daily_rate" placeholder="₹" min="0" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" name="description" rows="1"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label class="form-label">Icon Class</label>
+                                <input type="text" class="form-control" name="icon" placeholder="fas fa-dumbbell">
                             </div>
                         </div>
                         <div class="col-md-2 d-flex align-items-end">
                             <button type="submit" class="btn btn-success w-100" id="addEquipmentBtn">
-                                <i class="fas fa-plus-circle me-2"></i>Add Equipment
+                                <i class="fas fa-plus-circle me-2"></i>Add
                             </button>
                         </div>
                     </div>
@@ -194,163 +209,100 @@
                             </tr>
                         </thead>
                         <tbody id="equipmentTableBody">
-                            <tr id="equipment-1">
-                                <td>1</td>
+                            @foreach($equipment as $item)
+                            <tr id="equipment-{{ $item->id }}">
+                                <td>{{ $item->id }}</td>
                                 <td>
                                     <div class="d-flex align-items-center">
                                         <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                                            <i class="fas fa-baseball-bat-ball"></i>
+                                            <i class="{{ $item->icon ?? 'fas fa-dumbbell' }}"></i>
                                         </div>
                                         <div>
-                                            <strong>Cricket Bat</strong>
-                                            <div class="text-muted small">BAT-001</div>
+                                            <strong>{{ $item->name }}</strong>
+                                            <div class="text-muted small">ID: {{ $item->id }}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td>Outdoor</td>
-                                <td>20</td>
-                                <td>15</td>
+                                <td>{{ ucfirst($item->category) }}</td>
+                                <td>{{ $item->quantity }}</td>
+                                <td>{{ $item->available }}</td>
                                 <td>
-                                    <span class="status-badge status-good">Good</span>
+                                    <span class="status-badge status-{{ $item->available > 0 ? 'excellent' : 'average' }}">
+                                        {{ $item->available > 0 ? 'Available' : 'Out of Stock' }}
+                                    </span>
                                 </td>
                                 <td>
-                                    <button class="btn btn-sm btn-warning me-1 edit-btn" data-id="1" data-bs-toggle="tooltip" title="Edit">
+                                    <button class="btn btn-sm btn-warning me-1 edit-btn" onclick="editEquipment({{ $item->id }})" data-bs-toggle="tooltip" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-danger me-1 delete-btn" data-id="1" data-bs-toggle="tooltip" title="Delete">
+                                    <button class="btn btn-sm btn-danger me-1 delete-btn" onclick="deleteEquipment({{ $item->id }})" data-bs-toggle="tooltip" title="Delete">
                                         <i class="fas fa-trash"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-info view-btn" data-id="1" data-bs-toggle="tooltip" title="View Details">
+                                    <button class="btn btn-sm btn-info view-btn" onclick="viewEquipment({{ $item->id }})" data-bs-toggle="tooltip" title="View Details">
                                         <i class="fas fa-eye"></i>
                                     </button>
                                 </td>
                             </tr>
-                            <tr id="equipment-2">
-                                <td>2</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                                            <i class="fas fa-futbol"></i>
-                                        </div>
-                                        <div>
-                                            <strong>Football</strong>
-                                            <div class="text-muted small">FB-002</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>Outdoor</td>
-                                <td>15</td>
-                                <td>10</td>
-                                <td>
-                                    <span class="status-badge status-excellent">Excellent</span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning me-1 edit-btn" data-id="2">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger me-1 delete-btn" data-id="2">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-info view-btn" data-id="2">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr id="equipment-3">
-                                <td>3</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                                            <i class="fas fa-table-tennis-paddle-ball"></i>
-                                        </div>
-                                        <div>
-                                            <strong>Tennis Racket</strong>
-                                            <div class="text-muted small">TR-003</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>Indoor</td>
-                                <td>12</td>
-                                <td>8</td>
-                                <td>
-                                    <span class="status-badge status-average">Average</span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning me-1 edit-btn" data-id="3">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger me-1 delete-btn" data-id="3">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-info view-btn" data-id="3">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr id="equipment-4">
-                                <td>4</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                                            <i class="fas fa-basketball"></i>
-                                        </div>
-                                        <div>
-                                            <strong>Basketball</strong>
-                                            <div class="text-muted small">BB-004</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>Outdoor</td>
-                                <td>18</td>
-                                <td>12</td>
-                                <td>
-                                    <span class="status-badge status-good">Good</span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning me-1 edit-btn" data-id="4">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger me-1 delete-btn" data-id="4">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-info view-btn" data-id="4">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr id="equipment-5">
-                                <td>5</td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                                            <i class="fas fa-dumbbell"></i>
-                                        </div>
-                                        <div>
-                                            <strong>Dumbbell Set</strong>
-                                            <div class="text-muted small">DB-005</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>Fitness</td>
-                                <td>25</td>
-                                <td>20</td>
-                                <td>
-                                    <span class="status-badge status-excellent">Excellent</span>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-warning me-1 edit-btn" data-id="5">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger me-1 delete-btn" data-id="5">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-info view-btn" data-id="5">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </td>
-                            </tr>
+                            @endforeach
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Equipment Modal -->
+    <div class="modal fade" id="editEquipmentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Equipment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editEquipmentForm">
+                        @csrf
+                        <input type="hidden" name="id" id="editEquipmentId">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-control" name="name" id="editEquipmentName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Category</label>
+                                <select class="form-select" name="category" id="editEquipmentCategory" required>
+                                    <option value="indoor">Indoor</option>
+                                    <option value="outdoor">Outdoor</option>
+                                    <option value="fitness">Fitness</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Total Qty</label>
+                                <input type="number" class="form-control" name="quantity" id="editEquipmentQuantity" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Deposit (₹)</label>
+                                <input type="number" class="form-control" name="deposit" id="editEquipmentDeposit" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Daily Rate (₹)</label>
+                                <input type="number" class="form-control" name="daily_rate" id="editEquipmentDailyRate" required>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" name="description" id="editEquipmentDescription" rows="3"></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Icon Class (e.g. fas fa-dumbbell)</label>
+                                <input type="text" class="form-control" name="icon" id="editEquipmentIcon">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="updateEquipmentBtn">Save Changes</button>
                 </div>
             </div>
         </div>
@@ -363,6 +315,9 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        window.dbEquipment = @json($equipment);
+    </script>
     <script src="{{ asset('assets/admin/js/equipment.js') }}"></script>
 </body>
 </html>

@@ -23,9 +23,9 @@
         <div class="sidebar-header">
             <div class="student-info">
                 <div class="student-avatar">
-                    {{ strtoupper(substr(session('student_name', 'Student'), 0, 2)) }}
+                    {{ strtoupper(substr($student_name ?? 'Student', 0, 2)) }}
                 </div>
-                <h5>{{ session('student_name', 'Student') }}</h5>
+                <h5>{{ $student_name ?? 'Student' }}</h5>
                 <p>Student Account</p>
             </div>
         </div>
@@ -38,7 +38,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.equipment-list') }}">
+                <a href="{{ route('student.equipment-list') }}" class="{{ Request::is('student/equipment-list*') || Request::is('student/equipment-detail*') ? 'active' : '' }}">
                     <i class="fas fa-basketball-ball"></i>
                     <span>Equipment List</span>
                 </a>
@@ -56,19 +56,19 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.filter') }}">
+                <a href="{{ route('student.equipment-list') }}">
                     <i class="fas fa-filter"></i>
                     <span>Filter Equipment</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.request-book') }}">
+                <a href="{{ route('student.equipment-list') }}">
                     <i class="fas fa-plus-circle"></i>
                     <span>Request Equipment</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.feedback') }}" class="active">
+                <a href="{{ route('student.feedback') }}" class="{{ Request::is('student/feedback*') ? 'active' : '' }}">
                     <i class="fas fa-star"></i>
                     <span>Submit Feedback</span>
                 </a>
@@ -94,11 +94,11 @@
         <div class="equipment-info">
             <div class="equipment-details">
                 <div class="equipment-icon">
-                    <i class="<?php echo $equipment_icon; ?>"></i>
+                    <i class="{{ $equipment_icon ?? 'fas fa-box' }}"></i>
                 </div>
                 <div class="equipment-text">
-                    <h5><?php echo htmlspecialchars($equipment_name); ?></h5>
-                    <p><?php echo htmlspecialchars($category); ?> Equipment • Booking #<?php echo str_pad($booking_id, 3, '0', STR_PAD_LEFT); ?></p>
+                    <h5>{{ $equipment_name ?? 'Equipment' }}</h5>
+                    <p>{{ $category ?? 'Uncategorized' }} Equipment • Booking #{{ str_pad($booking_id ?? 0, 3, '0', STR_PAD_LEFT) }}</p>
                 </div>
             </div>
             <div class="booking-badge">
@@ -257,7 +257,7 @@
                         <button type="submit" class="btn-submit">
                             <i class="fas fa-paper-plane"></i> Submit Feedback
                         </button>
-                        <a href="booking-history.php" class="btn-cancel">
+                        <a href="{{ route('student.booking-history') }}" class="btn-cancel">
                             <i class="fas fa-times"></i> Cancel
                         </a>
                     </div>
@@ -279,7 +279,7 @@
         
         <!-- Footer -->
         <div class="footer">
-            <p class="mb-0">© <?php echo date("Y"); ?> Sports Equipment Rental Portal | Submit Feedback</p>
+            <p class="mb-0">© {{ date("Y") }} Sports Equipment Rental Portal | Submit Feedback</p>
         </div>
     </div>
 

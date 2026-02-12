@@ -491,12 +491,12 @@
             <form method="POST" action="{{ route('admin.login') }}" id="adminLoginForm">
                 @csrf
                 <div class="mb-4">
-                    <label class="form-label">Admin Username</label>
+                    <label class="form-label">Admin Email</label>
                     <div class="input-group">
                         <span class="input-group-text">
                             <i class="fas fa-user-tie"></i>
                         </span>
-                        <input type="text" class="form-control" name="username" placeholder="Enter admin username" required value="{{ old('username') }}">
+                        <input type="email" class="form-control" name="email" placeholder="Enter admin email" required value="{{ old('email') }}">
                     </div>
                 </div>
                 

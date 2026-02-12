@@ -25,31 +25,31 @@
         
         <ul class="sidebar-menu">
             <li>
-                <a href="{{ route('admin.dashboard') }}">
+                <a href="{{ route('admin.dashboard') }}" class="{{ Request::is('admin/dashboard*') ? 'active' : '' }}">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.equipment') }}">
+                <a href="{{ route('admin.equipment') }}" class="{{ Request::is('admin/equipment*') ? 'active' : '' }}">
                     <i class="fas fa-dumbbell"></i>
                     <span>Equipment</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.booking') }}">
+                <a href="{{ route('admin.booking') }}" class="{{ Request::is('admin/booking*') ? 'active' : '' }}">
                     <i class="fas fa-calendar-check"></i>
                     <span>Bookings</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.report') }}" class="active">
+                <a href="{{ route('admin.report') }}" class="{{ Request::is('admin/report*') ? 'active' : '' }}">
                     <i class="fas fa-chart-bar"></i>
                     <span>Reports</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('admin.penalty') }}">
+                <a href="{{ route('admin.penalty') }}" class="{{ Request::is('admin/penalty*') ? 'active' : '' }}">
                     <i class="fas fa-exclamation-triangle"></i>
                     <span>Penalty</span>
                 </a>
@@ -64,7 +64,7 @@
         
         <div class="user-profile">
             <div class="user-avatar">AD</div>
-            <div class="user-name">{{ session('admin_name', 'Admin User') }}</div>
+            <div class="user-name">{{ session('admin_name', 'Admin') }}</div>
             <div class="user-role">Super Administrator</div>
         </div>
     </div>
@@ -117,72 +117,49 @@
             <div class="col-md-4">
                 <div class="stats-card stats-1">
                     <i class="fas fa-dumbbell"></i>
-                    <h3 id="totalEquipment">156</h3>
+                    <h3 id="totalEquipment">{{ $totalEquipmentCount }}</h3>
                     <p>Total Equipment</p>
-                    <div class="trend up">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>12% from last month</span>
-                    </div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="stats-card stats-2">
                     <i class="fas fa-calendar-check"></i>
-                    <h3 id="totalBookings">342</h3>
+                    <h3 id="totalBookings">{{ $totalBookingsCount }}</h3>
                     <p>Total Bookings</p>
-                    <div class="trend up">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>18% from last month</span>
-                    </div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="stats-card stats-3">
                     <i class="fas fa-undo-alt"></i>
-                    <h3 id="returnedItems">298</h3>
+                    <h3 id="returnedItems">{{ $returnedItemsCount }}</h3>
                     <p>Returned Items</p>
-                    <div class="trend up">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>8% from last month</span>
-                    </div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="stats-card stats-4">
                     <i class="fas fa-rupee-sign"></i>
-                    <h3 id="totalPenalty">₹4,850</h3>
+                    <h3 id="totalPenalty">₹{{ number_format($totalPenaltyAmount) }}</h3>
                     <p>Total Penalty</p>
-                    <div class="trend down">
-                        <i class="fas fa-arrow-down"></i>
-                        <span>5% from last month</span>
-                    </div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="stats-card stats-5">
                     <i class="fas fa-users"></i>
-                    <h3 id="activeUsers">128</h3>
+                    <h3 id="activeUsers">{{ $activeUsersCount }}</h3>
                     <p>Active Users</p>
-                    <div class="trend up">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>22% from last month</span>
-                    </div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="stats-card stats-6">
                     <i class="fas fa-percentage"></i>
-                    <h3 id="returnRate">94.2%</h3>
+                    <h3 id="returnRate">{{ number_format($returnRate, 1) }}%</h3>
                     <p>Return Rate</p>
-                    <div class="trend up">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>2.4% from last month</span>
-                    </div>
                 </div>
             </div>
         </div>
 
-        
+        <!-- Charts Section -->
+        ... [existing HTML for charts] ...
 
         <!-- Most Used Equipment -->
         <div class="row mb-4 fade-in">
@@ -192,11 +169,6 @@
                         <div>
                             <i class="fas fa-trophy me-2"></i>Most Used Equipment
                         </div>
-                        <select class="form-select w-auto" id="timeFilter">
-                            <option value="month">This Month</option>
-                            <option value="quarter">This Quarter</option>
-                            <option value="year">This Year</option>
-                        </select>
                     </div>
                     <div class="card-body">
                         <div class="table-container">
@@ -208,11 +180,22 @@
                                         <th>Category</th>
                                         <th>Times Rented</th>
                                         <th>Usage %</th>
-                                        <th>Trend</th>
                                     </tr>
                                 </thead>
                                 <tbody id="equipmentTableBody">
-                                    <!-- Equipment rows will be added dynamically -->
+                                    @foreach($mostUsedEquipment as $index => $usage)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td><strong>{{ $usage->equipment->name ?? 'N/A' }}</strong></td>
+                                        <td>{{ $usage->equipment->category ?? 'N/A' }}</td>
+                                        <td>{{ $usage->rentals }}</td>
+                                        <td>
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar bg-primary" style="width: {{ ($usage->rentals / max(1, $totalBookingsCount)) * 100 }}%"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -237,7 +220,13 @@
                                     </tr>
                                 </thead>
                                 <tbody id="borrowersTableBody">
-                                    <!-- Top borrowers rows will be added dynamically -->
+                                    @foreach($topBorrowers as $index => $borrower)
+                                    <tr>
+                                        <td>{{ $index + 1 }}</td>
+                                        <td>{{ $borrower->user->name ?? 'N/A' }}</td>
+                                        <td><span class="badge bg-info">{{ $borrower->rentals }}</span></td>
+                                    </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -294,8 +283,20 @@
         © <span id="currentYear"></span> Sports Equipment Rental Portal 
     </footer>
 
+    <!-- PDF Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        window.reportData = {
+            bookings: @json($bookingsChartData),
+            categories: @json($categoryChartData),
+            usage: @json($usageChartData),
+            revenue: @json($revenueChartData)
+        };
+    </script>
     <script src="{{ asset('assets/admin/js/report.js') }}"></script>
 </body>
 </html>

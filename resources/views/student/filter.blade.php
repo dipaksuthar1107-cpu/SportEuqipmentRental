@@ -23,9 +23,9 @@
         <div class="sidebar-header">
             <div class="student-info">
                 <div class="student-avatar">
-                    {{ strtoupper(substr(session('student_name', 'Student'), 0, 2)) }}
+                    {{ strtoupper(substr($student_name ?? 'Student', 0, 2)) }}
                 </div>
-                <h5>{{ session('student_name', 'Student') }}</h5>
+                <h5>{{ $student_name ?? 'Student' }}</h5>
                 <p>Student Account</p>
             </div>
         </div>
@@ -38,7 +38,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.equipment-list') }}">
+                <a href="{{ route('student.equipment-list') }}" class="{{ Request::is('student/equipment-list*') || Request::is('student/equipment-detail*') ? 'active' : '' }}">
                     <i class="fas fa-basketball-ball"></i>
                     <span>Equipment List</span>
                 </a>
@@ -56,13 +56,13 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.filter') }}" class="active">
+                <a href="{{ route('student.equipment-list') }}" class="active">
                     <i class="fas fa-filter"></i>
                     <span>Filter Equipment</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.request-book') }}">
+                <a href="{{ route('student.equipment-list') }}">
                     <i class="fas fa-plus-circle"></i>
                     <span>Request Equipment</span>
                 </a>
@@ -128,15 +128,15 @@
         <div class="equipment-grid" id="equipmentGrid">
             <?php foreach ($equipment as $item): ?>
             <div class="equipment-card" 
-                 data-category="<?php echo strtolower($item['category']); ?>"
-                 data-name="<?php echo strtolower($item['name']); ?>">
+                 data-category="<?php echo strtolower($item->category); ?>"
+                 data-name="<?php echo strtolower($item->name); ?>">
                 <div class="equipment-header">
                     <div class="equipment-icon">
-                        <i class="<?php echo $item['icon']; ?>"></i>
+                        <i class="<?php echo $item->icon; ?>"></i>
                     </div>
-                    <h5><?php echo $item['name']; ?></h5>
-                    <span class="category-badge badge-<?php echo strtolower($item['category']); ?>">
-                        <?php echo $item['category']; ?>
+                    <h5><?php echo $item->name; ?></h5>
+                    <span class="category-badge badge-<?php echo strtolower($item->category); ?>">
+                        <?php echo $item->category; ?>
                     </span>
                 </div>
                 
@@ -144,24 +144,24 @@
                     <div class="equipment-info">
                         <div class="info-item">
                             <span class="info-label">Condition</span>
-                            <span class="info-value"><?php echo $item['condition']; ?></span>
+                            <span class="info-value"><?php echo $item->condition; ?></span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Deposit</span>
-                            <span class="info-value"><?php echo $item['deposit']; ?></span>
+                            <span class="info-value">₹<?php echo $item->deposit ?? 0; ?></span>
                         </div>
                     </div>
                     
                     <div class="availability">
-                        <div class="availability-dot <?php echo $item['available'] > 3 ? 'available' : 'low'; ?>"></div>
-                        <span class="info-value"><?php echo $item['available']; ?> of <?php echo $item['total']; ?> available</span>
+                        <div class="availability-dot <?php echo $item->available > 0 ? 'available' : 'low'; ?>"></div>
+                        <span class="info-value"><?php echo $item->available; ?> of <?php echo $item->quantity; ?> available</span>
                     </div>
                     
                     <div class="equipment-actions">
-                        <button class="btn-view" onclick="viewEquipment(<?php echo $item['id']; ?>)">
+                        <button class="btn-view" onclick="viewEquipment({{ $item->id }})">
                             <i class="fas fa-eye"></i> View
                         </button>
-                        <button class="btn-request" onclick="requestEquipment(<?php echo $item['id']; ?>)">
+                        <button class="btn-request" onclick="requestEquipment({{ $item->id }})">
                             <i class="fas fa-calendar-plus"></i> Request
                         </button>
                     </div>
@@ -172,7 +172,7 @@
         
         <!-- Footer -->
         <div class="footer">
-            <p class="mb-0">© <?php echo date("Y"); ?> Sports Equipment Rental Portal | Filter Equipment</p>
+            <p class="mb-0">© {{ date("Y") }} Sports Equipment Rental Portal | Filter Equipment</p>
         </div>
     </div>
 

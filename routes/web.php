@@ -22,11 +22,13 @@ Route::prefix('student')->name('student.')->group(function () {
     // Protected Routes
     Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('dashboard');
     Route::get('/equipment-list', [StudentController::class, 'equipmentList'])->name('equipment-list');
+    Route::get('/equipment-detail/{id}', [StudentController::class, 'equipmentDetail'])->name('equipment-detail');
     Route::get('/booking-status', [StudentController::class, 'bookingStatus'])->name('booking-status');
     Route::get('/booking-history', [StudentController::class, 'bookingHistory'])->name('booking-history');
-    Route::get('/filter', [StudentController::class, 'filter'])->name('filter');
-    Route::get('/request-book', [StudentController::class, 'requestBook'])->name('request-book');
-    Route::get('/feedback', [StudentController::class, 'feedback'])->name('feedback');
+    Route::get('/filter', [StudentController::class, 'equipmentList'])->name('filter');
+    Route::get('/request-book/{id?}', [StudentController::class, 'requestBook'])->name('request-book');
+    Route::post('/request-book', [StudentController::class, 'submitBooking'])->name('request-book.submit');
+    Route::get('/feedback/{id?}', [StudentController::class, 'feedback'])->name('feedback');
     
     // Public/Auth agnostic
     Route::get('/forgot-password', function () { return view('student.forgot-password'); })->name('forgot-password');
@@ -43,9 +45,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Protected Routes
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
     Route::get('/equipment', [AdminController::class, 'equipment'])->name('equipment');
+    Route::post('/equipment/store', [AdminController::class, 'storeEquipment'])->name('equipment.store');
+    Route::post('/equipment/update', [AdminController::class, 'updateEquipment'])->name('equipment.update');
+    Route::post('/equipment/delete', [AdminController::class, 'deleteEquipment'])->name('equipment.delete');
     Route::get('/booking', [AdminController::class, 'booking'])->name('booking');
+    Route::post('/booking/update-status', [AdminController::class, 'updateBookingStatus'])->name('booking.update-status');
     Route::get('/report', [AdminController::class, 'report'])->name('report');
     Route::get('/penalty', [AdminController::class, 'penalty'])->name('penalty');
+    Route::post('/penalty/store', [AdminController::class, 'storePenalty'])->name('penalty.store');
+    Route::post('/penalty/update-status', [AdminController::class, 'updatePenaltyStatus'])->name('penalty.update-status');
 });
 
 

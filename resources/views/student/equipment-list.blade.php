@@ -23,9 +23,9 @@
         <div class="sidebar-header">
             <div class="student-info">
                 <div class="student-avatar">
-                    {{ strtoupper(substr(session('student_name', 'Student'), 0, 2)) }}
+                    {{ strtoupper(substr($student_name ?? 'Student', 0, 2)) }}
                 </div>
-                <h5>{{ session('student_name', 'Student') }}</h5>
+                <h5>{{ $student_name ?? 'Student' }}</h5>
                 <p>Student Account</p>
             </div>
         </div>
@@ -38,7 +38,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.equipment-list') }}" class="active">
+                <a href="{{ route('student.equipment-list') }}" class="{{ Request::is('student/equipment-list*') || Request::is('student/equipment-detail*') ? 'active' : '' }}">
                     <i class="fas fa-basketball-ball"></i>
                     <span>Equipment List</span>
                 </a>
@@ -56,13 +56,13 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.filter') }}">
+                <a href="{{ route('student.equipment-list') }}">
                     <i class="fas fa-filter"></i>
                     <span>Filter Equipment</span>
                 </a>
             </li>
             <li>
-                <a href="{{ route('student.request-book') }}">
+                <a href="{{ route('student.equipment-list') }}">
                     <i class="fas fa-plus-circle"></i>
                     <span>Request Equipment</span>
                 </a>
@@ -87,16 +87,16 @@
         <!-- Equipment Header -->
         <div class="equipment-header">
             <div class="equipment-title">
-                <h1><?php echo $equipment['name']; ?></h1>
-                <p><?php echo $equipment['description']; ?></p>
+                <h1>{{ $equipment->name }}</h1>
+                <p>{{ $equipment->description }}</p>
                 <div class="equipment-badges">
-                    <span class="badge badge-category"><?php echo $equipment['category']; ?></span>
-                    <span class="badge badge-condition"><?php echo $equipment['condition']; ?> Condition</span>
-                    <span class="badge badge-available"><?php echo $equipment['available']; ?> Available</span>
+                    <span class="badge badge-category">{{ $equipment->category }}</span>
+                    <span class="badge badge-condition">{{ $equipment->condition }} Condition</span>
+                    <span class="badge badge-available">{{ $equipment->available }} Available</span>
                 </div>
             </div>
             <div class="equipment-icon">
-                <i class="<?php echo $equipment['image_icon']; ?>"></i>
+                <i class="{{ $equipment->icon }}"></i>
             </div>
         </div>
         
@@ -114,27 +114,27 @@
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Equipment Name</span>
-                            <span class="detail-value"><?php echo $equipment['name']; ?></span>
+                            <span class="detail-value">{{ $equipment->name }}</span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Category</span>
-                            <span class="detail-value"><?php echo $equipment['category']; ?></span>
+                            <span class="detail-value">{{ $equipment->category }}</span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Condition</span>
                             <span class="detail-value">
                                 <span class="badge" style="background: rgba(0, 201, 167, 0.1); color: var(--accent);">
-                                    <?php echo $equipment['condition']; ?>
+                                    {{ $equipment->condition }}
                                 </span>
                             </span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Total Quantity</span>
-                            <span class="detail-value"><?php echo $equipment['quantity']; ?></span>
+                            <span class="detail-value">{{ $equipment->quantity }}</span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Available Now</span>
-                            <span class="detail-value"><?php echo $equipment['available']; ?></span>
+                            <span class="detail-value">{{ $equipment->available }}</span>
                         </div>
                     </div>
                     
@@ -144,19 +144,19 @@
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Security Deposit</span>
-                            <span class="detail-value"><?php echo $equipment['deposit']; ?></span>
+                            <span class="detail-value">₹{{ $equipment->deposit ?? '0' }}</span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Daily Rental Rate</span>
-                            <span class="detail-value"><?php echo $equipment['daily_rate']; ?></span>
+                            <span class="detail-value">₹{{ $equipment->daily_rate ?? '0' }}</span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Max Rental Period</span>
-                            <span class="detail-value"><?php echo $equipment['max_days']; ?> days</span>
+                            <span class="detail-value">{{ $equipment->max_days ?? 7 }} days</span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Late Return Fine</span>
-                            <span class="detail-value"><?php echo $equipment['daily_rate']; ?>/day</span>
+                            <span class="detail-value">₹{{ $equipment->daily_rate ?? '100' }}/day</span>
                         </div>
                     </div>
                 </div>
@@ -165,18 +165,26 @@
                     <div class="rules-card">
                         <h5><i class="fas fa-exclamation-triangle"></i> Rental Rules & Regulations</h5>
                         <ul class="rules-list">
-                            <?php foreach($equipment['rules'] as $rule): ?>
-                            <li><?php echo $rule; ?></li>
-                            <?php endforeach; ?>
+                            @if($equipment->rules)
+                                @foreach($equipment->rules as $rule)
+                                <li>{{ $rule }}</li>
+                                @endforeach
+                            @else
+                                <li>No specific rules mentioned.</li>
+                            @endif
                         </ul>
                     </div>
                     
                     <div class="features-card">
                         <h5><i class="fas fa-star"></i> Equipment Features</h5>
                         <ul class="features-list">
-                            <?php foreach($equipment['features'] as $feature): ?>
-                            <li><?php echo $feature; ?></li>
-                            <?php endforeach; ?>
+                            @if($equipment->features)
+                                @foreach($equipment->features as $feature)
+                                <li>{{ $feature }}</li>
+                                @endforeach
+                            @else
+                                <li>General sports equipment.</li>
+                            @endif
                         </ul>
                     </div>
                 </div>
@@ -186,8 +194,9 @@
                     <div class="rating-display">
                         <div class="stars">
                             <?php 
-                            $fullStars = floor($equipment['rating']);
-                            $hasHalfStar = $equipment['rating'] - $fullStars >= 0.5;
+                            $rating = $equipment->rating ?? 0;
+                            $fullStars = floor($rating);
+                            $hasHalfStar = $rating - $fullStars >= 0.5;
                             
                             for($i = 1; $i <= 5; $i++): 
                                 if($i <= $fullStars): ?>
@@ -199,20 +208,20 @@
                                 <?php endif;
                             endfor; ?>
                         </div>
-                        <div class="rating-value"><?php echo $equipment['rating']; ?></div>
-                        <div class="reviews-count">(<?php echo $equipment['reviews']; ?> reviews)</div>
+                        <div class="rating-value">{{ $equipment->rating ?? '0.0' }}</div>
+                        <div class="reviews-count">({{ $equipment->reviews ?? 0 }} reviews)</div>
                     </div>
-                    <p class="mb-0">Based on feedback from <?php echo $equipment['reviews']; ?> previous renters</p>
+                    <p class="mb-0">Based on feedback from {{ $equipment->reviews ?? 0 }} previous renters</p>
                 </div>
                 
                 <!-- Action Buttons -->
                 <div class="action-buttons">
                     <button class="btn-request" id="requestEquipmentBtn">
-                        <a href="request-book.php" class="btn-request-link">
+                        <a href="{{ route('student.request-book', ['id' => $equipment->id]) }}" class="btn-request-link">
                             <i class="fas fa-calendar-plus"></i> Request This Equipment
                         </a>
                     </button>
-                    <a href="equipment-list.php" class="btn-back">
+                    <a href="{{ route('student.equipment-list') }}" class="btn-back">
                         <i class="fas fa-arrow-left"></i> Back to Equipment List
                     </a>
                 </div>
@@ -221,7 +230,7 @@
         
         <!-- Footer -->
         <div class="footer">
-            <p class="mb-0">© <?php echo date("Y"); ?> Sports Equipment Rental Portal | Equipment Details</p>
+            <p class="mb-0">© {{ date("Y") }} Sports Equipment Rental Portal | Equipment Details</p>
         </div>
     </div>
 
