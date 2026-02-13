@@ -253,6 +253,7 @@ class AdminController extends Controller
 
         Equipment::create([
             'name' => $request->name,
+            'code' => 'EQP-' . strtoupper(substr($request->category, 0, 3)) . '-' . strtoupper(\Illuminate\Support\Str::random(4)),
             'category' => $request->category,
             'quantity' => $request->quantity,
             'available' => $request->quantity,
