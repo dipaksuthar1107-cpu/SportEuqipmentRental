@@ -14,6 +14,7 @@ class Equipment extends Model
         'description',
         'code',
         'icon',
+        'image',
         'category',
         'quantity',
         'available',

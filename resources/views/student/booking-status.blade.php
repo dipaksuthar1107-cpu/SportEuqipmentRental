@@ -153,8 +153,12 @@
             <div class="booking-card <?php echo $booking->status; ?>" data-status="<?php echo $booking->status; ?>">
                 <div class="booking-header">
                     <div class="booking-title">
-                        <div class="booking-icon">
-                            <i class="<?php echo $booking->equipment->icon ?? 'fas fa-dumbbell'; ?>"></i>
+                        <div class="booking-icon" style="overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border-radius: 10px;">
+                            @if($booking->equipment->image)
+                                <img src="{{ asset('storage/' . $booking->equipment->image) }}" alt="{{ $booking->equipment->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            @else
+                                <i class="{{ $booking->equipment->icon ?? 'fas fa-dumbbell' }}"></i>
+                            @endif
                         </div>
                         <div class="booking-details">
                             <h5><?php echo $booking->equipment->name ?? 'N/A'; ?></h5>

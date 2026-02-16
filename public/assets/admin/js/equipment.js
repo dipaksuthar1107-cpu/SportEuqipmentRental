@@ -18,15 +18,15 @@ document.getElementById('addEquipmentForm').addEventListener('submit', function 
     const originalText = submitBtn.innerHTML;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
     submitBtn.disabled = true;
-
     const formData = new FormData(this);
-    const data = {};
-    formData.forEach((value, key) => { data[key] = value });
 
     fetch('/admin/equipment/store', {
         method: 'POST',
-        headers: getHeaders(),
-        body: JSON.stringify(data)
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
+        },
+        body: formData
     })
         .then(response => response.json())
         .then(data => {
@@ -59,7 +59,17 @@ function editEquipment(id) {
     document.getElementById('editEquipmentDeposit').value = item.deposit;
     document.getElementById('editEquipmentDailyRate').value = item.daily_rate;
     document.getElementById('editEquipmentDescription').value = item.description || '';
-    document.getElementById('editEquipmentIcon').value = item.icon || 'fas fa-dumbbell';
+
+    // Image Preview
+    const previewDiv = document.getElementById('currentImagePreview');
+    if (item.image) {
+        previewDiv.innerHTML = `
+            <p class="small text-muted mb-1">Current Image:</p>
+            <img src="/storage/${item.image}" class="img-thumbnail" style="max-height: 100px;">
+        `;
+    } else {
+        previewDiv.innerHTML = '<p class="small text-muted mb-1">No image uploaded.</p>';
+    }
 
     const editModal = new bootstrap.Modal(document.getElementById('editEquipmentModal'));
     editModal.show();
@@ -74,13 +84,14 @@ document.getElementById('updateEquipmentBtn').addEventListener('click', function
 
     const form = document.getElementById('editEquipmentForm');
     const formData = new FormData(form);
-    const data = {};
-    formData.forEach((value, key) => { data[key] = value });
 
     fetch('/admin/equipment/update', {
         method: 'POST',
-        headers: getHeaders(),
-        body: JSON.stringify(data)
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
+        },
+        body: formData
     })
         .then(response => response.json())
         .then(data => {

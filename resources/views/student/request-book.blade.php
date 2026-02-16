@@ -104,8 +104,12 @@
         <!-- Request Form -->
         <div class="request-card">
             <div class="request-header">
-                <div class="request-icon">
-                    <i class="fas fa-calendar-plus"></i>
+                <div class="request-icon" style="overflow: hidden; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 12px; border: 1px solid #eee;">
+                    @if($equipment->image)
+                        <img src="{{ asset('storage/' . $equipment->image) }}" alt="{{ $equipment->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    @else
+                        <i class="fas fa-calendar-plus"></i>
+                    @endif
                 </div>
                 <h4>Booking Request Form</h4>
                 <p>Fill in the details for your equipment rental</p>
@@ -119,8 +123,12 @@
                     <div class="form-group">
                         <label class="form-label">Equipment</label>
                         <div class="input-group">
-                            <span class="input-group-text">
-                                <i class="fas fa-dumbbell"></i>
+                            <span class="input-group-text" style="padding: 0; width: 40px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                                @if($equipment->image)
+                                    <img src="{{ asset('storage/' . $equipment->image) }}" alt="{{ $equipment->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                @else
+                                    <i class="{{ $equipment->icon ?? 'fas fa-dumbbell' }}"></i>
+                                @endif
                             </span>
                             <input type="text" class="form-control" value="{{ $equipment->name }}" readonly>
                         </div>

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 use App\Mail\PasswordResetMail;
 use App\Services\SmsService;
 
@@ -255,8 +256,13 @@ class AdminController extends Controller
             'deposit' => 'required|numeric|min:0',
             'daily_rate' => 'required|numeric|min:0',
             'description' => 'nullable|string',
-            'icon' => 'nullable|string'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('equipment', 'public');
+        }
 
         Equipment::create([
             'name' => $request->name,
@@ -267,6 +273,7 @@ class AdminController extends Controller
             'deposit' => $request->deposit,
             'daily_rate' => $request->daily_rate,
             'description' => $request->description,
+            'image' => $imagePath,
             'icon' => $request->icon ?? 'fas fa-dumbbell',
             'max_days' => 7,
             'rating' => 0,
@@ -290,14 +297,25 @@ class AdminController extends Controller
             'deposit' => 'required|numeric|min:0',
             'daily_rate' => 'required|numeric|min:0',
             'description' => 'nullable|string',
-            'icon' => 'nullable|string'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $equipment = Equipment::find($request->id);
+        
+        $data = $request->except(['image']);
+        
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($equipment->image) {
+                Storage::disk('public')->delete($equipment->image);
+            }
+            $data['image'] = $request->file('image')->store('equipment', 'public');
+        }
+
         $diff = $request->quantity - $equipment->quantity;
         $equipment->available += $diff;
         
-        $equipment->update($request->all());
+        $equipment->update($data);
 
         return response()->json(['success' => true, 'message' => 'Equipment updated successfully!']);
     }
@@ -315,6 +333,10 @@ class AdminController extends Controller
         
         if ($activeBookings > 0) {
             return response()->json(['success' => false, 'message' => 'Cannot delete equipment with active bookings.']);
+        }
+
+        if ($equipment->image) {
+            Storage::disk('public')->delete($equipment->image);
         }
 
         $equipment->delete();

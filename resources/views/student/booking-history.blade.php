@@ -141,8 +141,12 @@
                  data-feedback="<?php echo 'pending'; ?>">
                 <div class="history-header">
                     <div class="history-title">
-                        <div class="history-icon">
-                            <i class="<?php echo $item->equipment->icon ?? 'fas fa-dumbbell'; ?>"></i>
+                        <div class="history-icon" style="overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border-radius: 10px;">
+                            @if($item->equipment->image)
+                                <img src="{{ asset('storage/' . $item->equipment->image) }}" alt="{{ $item->equipment->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            @else
+                                <i class="{{ $item->equipment->icon ?? 'fas fa-dumbbell' }}"></i>
+                            @endif
                         </div>
                         <div class="history-details">
                             <h5><?php echo $item->equipment->name ?? 'N/A'; ?></h5>

@@ -95,8 +95,12 @@
                     <span class="badge badge-available">{{ $equipment->available }} Available</span>
                 </div>
             </div>
-            <div class="equipment-icon">
-                <i class="{{ $equipment->icon }}"></i>
+            <div class="equipment-icon" style="overflow: hidden; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.2); border-radius: 15px;">
+                @if($equipment->image)
+                    <img src="{{ asset('storage/' . $equipment->image) }}" alt="{{ $equipment->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                @else
+                    <i class="{{ $equipment->icon }}"></i>
+                @endif
             </div>
         </div>
         

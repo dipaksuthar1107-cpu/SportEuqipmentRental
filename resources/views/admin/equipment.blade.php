@@ -121,7 +121,7 @@
                 <i class="fas fa-plus-circle me-2"></i>Add New Equipment
             </div>
             <div class="card-body">
-                <form id="addEquipmentForm">
+                <form id="addEquipmentForm" enctype="multipart/form-data">
                     @csrf
                     <div class="row g-3">
                         <div class="col-md-3">
@@ -168,8 +168,8 @@
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <label class="form-label">Icon Class</label>
-                                <input type="text" class="form-control" name="icon" placeholder="fas fa-dumbbell">
+                                <label class="form-label">Equipment Image</label>
+                                <input type="file" class="form-control" name="image" accept="image/*">
                             </div>
                         </div>
                         <div class="col-md-2 d-flex align-items-end">
@@ -215,8 +215,12 @@
                                 <td>{{ $item->id }}</td>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
-                                            <i class="{{ $item->icon ?? 'fas fa-dumbbell' }}"></i>
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; overflow: hidden; background-color: #f0f0f0;">
+                                            @if($item->image)
+                                                <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                            @else
+                                                <i class="{{ $item->icon ?? 'fas fa-dumbbell' }} text-primary"></i>
+                                            @endif
                                         </div>
                                         <div>
                                             <strong>{{ $item->name }}</strong>
@@ -261,7 +265,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editEquipmentForm">
+                    <form id="editEquipmentForm" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="id" id="editEquipmentId">
                         <div class="row g-3">
@@ -295,8 +299,9 @@
                                 <textarea class="form-control" name="description" id="editEquipmentDescription" rows="3"></textarea>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label">Icon Class (e.g. fas fa-dumbbell)</label>
-                                <input type="text" class="form-control" name="icon" id="editEquipmentIcon">
+                                <label class="form-label">Equipment Image</label>
+                                <input type="file" class="form-control" name="image" accept="image/*">
+                                <div id="currentImagePreview" class="mt-2"></div>
                             </div>
                         </div>
                     </form>

@@ -131,8 +131,12 @@
                  data-category="<?php echo strtolower($item->category); ?>"
                  data-name="<?php echo strtolower($item->name); ?>">
                 <div class="equipment-header">
-                    <div class="equipment-icon">
-                        <i class="<?php echo $item->icon; ?>"></i>
+                    <div class="equipment-icon" style="overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f0f0f0;">
+                        @if($item->image)
+                            <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        @else
+                            <i class="{{ $item->icon ?? 'fas fa-dumbbell' }}"></i>
+                        @endif
                     </div>
                     <h5><?php echo $item->name; ?></h5>
                     <span class="category-badge badge-<?php echo strtolower($item->category); ?>">
