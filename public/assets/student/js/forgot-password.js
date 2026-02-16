@@ -53,28 +53,48 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (isValid) {
-            // Simulate API call with loading state
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
             submitBtn.disabled = true;
 
-            // Simulate network request delay
-            setTimeout(() => {
-                // Show success message
-                form.style.display = 'none';
-                userEmailSpan.textContent = email;
-                successMessage.style.display = 'block';
+            const verification = document.querySelector('input[name="verification"]:checked').value;
+            const csrfToken = document.querySelector('input[name="_token"]').value;
 
-                // Reset button state
-                submitBtn.innerHTML = '<span class="btn-text">Send Reset Link</span><i class="fas fa-paper-plane"></i>';
-                submitBtn.disabled = false;
-
-                // Log to console (in real app, you would send to server)
-                console.log('Password reset requested for:', email);
-                console.log('Verification method:', document.querySelector('input[name="verification"]:checked').value);
-
-                // Show notification
-                showNotification('Reset link sent successfully! Check your email.');
-            }, 1500);
+            fetch(window.location.href, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    verification: verification
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        } else {
+                            form.style.display = 'none';
+                            userEmailSpan.textContent = email;
+                            successMessage.querySelector('p').textContent = data.message || `We've sent a password reset OTP to ${email}. Please check your inbox.`;
+                            successMessage.style.display = 'block';
+                            showNotification(data.message || 'OTP sent successfully!');
+                        }
+                    } else {
+                        showError(emailError, data.message || 'Something went wrong. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showError(emailError, 'Failed to send reset link. Please check your connection.');
+                })
+                .finally(() => {
+                    submitBtn.innerHTML = '<span class="btn-text">Send Reset Link</span><i class="fas fa-paper-plane"></i>';
+                    submitBtn.disabled = false;
+                });
         }
     });
 

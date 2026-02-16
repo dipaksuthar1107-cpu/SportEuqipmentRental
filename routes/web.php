@@ -32,6 +32,13 @@ Route::prefix('student')->name('student.')->group(function () {
     
     // Public/Auth agnostic
     Route::get('/forgot-password', function () { return view('student.forgot-password'); })->name('forgot-password');
+    Route::post('/forgot-password', [StudentController::class, 'sendOtp'])->name('forgot-password.submit');
+    Route::post('/resend-otp', [StudentController::class, 'sendOtp'])->name('resend-otp');
+    Route::get('/verify-otp', [StudentController::class, 'showVerifyOtpForm'])->name('verify-otp');
+    Route::post('/verify-otp', [StudentController::class, 'verifyOtp'])->name('verify-otp.submit');
+    Route::get('/reset-password', [StudentController::class, 'showResetForm'])->name('reset-password');
+    Route::post('/reset-password', [StudentController::class, 'resetPassword'])->name('reset-password.submit');
+    
     Route::get('/register', function () { return view('student.register'); })->name('register');
     Route::post('/register', [StudentController::class, 'registerPost'])->name('register.submit');
 });
@@ -41,6 +48,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AdminController::class, 'login']);
     Route::get('/logout', [AdminController::class, 'logout'])->name('logout');
+
+    Route::get('/forgot-password', function () { return view('admin.forgot-password'); })->name('forgot-password');
+    Route::post('/forgot-password', [AdminController::class, 'sendOtp'])->name('forgot-password.submit');
+    Route::post('/resend-otp', [AdminController::class, 'sendOtp'])->name('resend-otp');
+    Route::get('/verify-otp', [AdminController::class, 'showVerifyOtpForm'])->name('verify-otp');
+    Route::post('/verify-otp', [AdminController::class, 'verifyOtp'])->name('verify-otp.submit');
+    Route::get('/reset-password', [AdminController::class, 'showResetForm'])->name('reset-password');
+    Route::post('/reset-password', [AdminController::class, 'resetPassword'])->name('reset-password.submit');
     
     // Protected Routes
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');

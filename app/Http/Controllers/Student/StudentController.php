@@ -7,6 +7,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Equipment;
 use App\Models\Booking;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
+use App\Mail\PasswordResetMail;
+use App\Services\SmsService;
 
 class StudentController extends Controller
 {
@@ -434,5 +442,109 @@ class StudentController extends Controller
         ]);
 
         return redirect()->route('student.login')->with('success', 'Registration successful! Please login.');
+    }
+
+    public function sendOtp(Request $request)
+    {
+        $email = $request->email ?? session('reset_email');
+        $verification = $request->verification ?? session('reset_method', 'email');
+
+        if (!$email) {
+            return response()->json(['success' => false, 'message' => 'Email session expired.']);
+        }
+
+        $user = User::where('email', $email)->first();
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found.']);
+        }
+        $otp = sprintf("%06d", mt_rand(1, 999999));
+
+        DB::table('password_resets')->updateOrInsert(
+            ['email' => $email],
+            ['token' => $otp, 'created_at' => Carbon::now()]
+        );
+
+        if ($request->verification === 'email') {
+            Mail::to($request->email)->send(new PasswordResetMail($user->name, $otp));
+            $message = "OTP sent to your email!";
+        } else {
+            $smsService = new SmsService();
+            $phone = $user->phone ?? '1234567890'; 
+            $smsService->sendSms($phone, "Sports Rental: Your reset OTP is: " . $otp);
+            $message = "OTP sent via SMS!";
+        }
+
+        // Store info in session for verify page and resend
+        session([
+            'reset_email' => $email,
+            'reset_method' => $verification
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'redirect' => route('student.verify-otp')
+        ]);
+    }
+
+    public function showVerifyOtpForm()
+    {
+        if (!session('reset_email')) {
+            return redirect()->route('student.forgot-password');
+        }
+        return view('student.verify-otp', ['email' => session('reset_email')]);
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'otp' => 'required|array|size:6',
+            'email' => 'required|email'
+        ]);
+
+        $otp = implode('', $request->otp);
+        $resetData = DB::table('password_resets')
+            ->where('email', $request->email)
+            ->where('token', $otp)
+            ->first();
+
+        if (!$resetData || Carbon::parse($resetData->created_at)->addMinutes(30)->isPast()) {
+            return back()->withErrors(['message' => 'Invalid or expired OTP.']);
+        }
+
+        // Mark as verified in session
+        session(['otp_verified' => true]);
+
+        return redirect()->route('student.reset-password');
+    }
+
+    public function showResetForm()
+    {
+        if (!session('otp_verified') || !session('reset_email')) {
+            return redirect()->route('student.forgot-password')->withErrors(['message' => 'Please verify OTP first.']);
+        }
+
+        return view('student.reset-password', ['email' => session('reset_email')]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|min:5|confirmed',
+        ]);
+
+        if (!session('otp_verified') || session('reset_email') !== $request->email) {
+            return redirect()->route('student.forgot-password')->withErrors(['message' => 'Session expired or unauthorized.']);
+        }
+
+        $user = User::where('email', $request->email)->first();
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        DB::table('password_resets')->where('email', $request->email)->delete();
+        session()->forget(['otp_verified', 'reset_email']);
+
+        return redirect()->route('student.login')->with('success', 'Password updated successfully!');
     }
 }

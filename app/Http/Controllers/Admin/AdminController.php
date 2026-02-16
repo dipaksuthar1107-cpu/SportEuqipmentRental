@@ -8,6 +8,13 @@ use App\Models\Equipment;
 use App\Models\Booking;
 use App\Models\Penalty;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
+use App\Mail\PasswordResetMail;
+use App\Services\SmsService;
 
 class AdminController extends Controller
 {
@@ -367,5 +374,107 @@ class AdminController extends Controller
         $users = User::all();
         $equipment = Equipment::all();
         return view('admin.penalty', compact('penalties', 'users', 'equipment'));
+    }
+
+    public function sendOtp(Request $request)
+    {
+        $email = $request->email ?? session('admin_reset_email');
+        $verification = $request->verification ?? session('admin_reset_method', 'email');
+
+        if (!$email) {
+            return response()->json(['success' => false, 'message' => 'Session expired.']);
+        }
+
+        $user = User::where('email', $email)->first();
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Admin not found.']);
+        }
+        $otp = sprintf("%06d", mt_rand(1, 999999));
+
+        DB::table('password_resets')->updateOrInsert(
+            ['email' => $email],
+            ['token' => $otp, 'created_at' => Carbon::now()]
+        );
+
+        if ($request->verification === 'email') {
+            Mail::to($request->email)->send(new PasswordResetMail($user->name, $otp));
+            $message = "OTP sent to your work email!";
+        } else {
+            $smsService = new SmsService();
+            $phone = $user->phone ?? '1122334455'; 
+            $smsService->sendSms($phone, "Sports Rental Admin: Your reset OTP is: " . $otp);
+            $message = "OTP sent via SMS!";
+        }
+
+        session([
+            'admin_reset_email' => $email,
+            'admin_reset_method' => $verification
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'redirect' => route('admin.verify-otp')
+        ]);
+    }
+
+    public function showVerifyOtpForm()
+    {
+        if (!session('admin_reset_email')) {
+            return redirect()->route('admin.forgot-password');
+        }
+        return view('admin.verify-otp', ['email' => session('admin_reset_email')]);
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'otp' => 'required|array|size:6',
+            'email' => 'required|email'
+        ]);
+
+        $otp = implode('', $request->otp);
+        $resetData = DB::table('password_resets')
+            ->where('email', $request->email)
+            ->where('token', $otp)
+            ->first();
+
+        if (!$resetData || Carbon::parse($resetData->created_at)->addMinutes(30)->isPast()) {
+            return back()->withErrors(['message' => 'Invalid or expired OTP.']);
+        }
+
+        session(['admin_otp_verified' => true]);
+
+        return redirect()->route('admin.reset-password');
+    }
+
+    public function showResetForm()
+    {
+        if (!session('admin_otp_verified') || !session('admin_reset_email')) {
+            return redirect()->route('admin.forgot-password')->withErrors(['message' => 'Please verify OTP first.']);
+        }
+
+        return view('admin.reset-password', ['email' => session('admin_reset_email')]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|min:5|confirmed',
+        ]);
+
+        if (!session('admin_otp_verified') || session('admin_reset_email') !== $request->email) {
+            return redirect()->route('admin.forgot-password')->withErrors(['message' => 'Session expired or unauthorized.']);
+        }
+
+        $user = User::where('email', $request->email)->first();
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        DB::table('password_resets')->where('email', $request->email)->delete();
+        session()->forget(['admin_otp_verified', 'admin_reset_email']);
+
+        return redirect()->route('admin.login')->with('success', 'Admin password updated successfully!');
     }
 }
