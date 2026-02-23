@@ -1,7 +1,10 @@
 // Mobile sidebar toggle
-document.getElementById('mobileToggle').addEventListener('click', function () {
-    document.getElementById('sidebar').classList.toggle('active');
-});
+const mobileToggle = document.getElementById('mobileToggle');
+if (mobileToggle) {
+    mobileToggle.addEventListener('click', function () {
+        document.getElementById('sidebar').classList.toggle('active');
+    });
+}
 
 // Close sidebar when clicking outside on mobile
 document.addEventListener('click', function (event) {
@@ -9,7 +12,9 @@ document.addEventListener('click', function (event) {
     const toggleBtn = document.getElementById('mobileToggle');
 
     if (window.innerWidth <= 992 &&
+        sidebar &&
         !sidebar.contains(event.target) &&
+        toggleBtn &&
         !toggleBtn.contains(event.target) &&
         sidebar.classList.contains('active')) {
         sidebar.classList.remove('active');
@@ -22,19 +27,23 @@ const feedbackFilter = document.getElementById('feedbackFilter');
 const categoryFilter = document.getElementById('categoryFilter');
 const historyCards = document.querySelectorAll('.history-card');
 const emptyState = document.getElementById('emptyState');
+const emptyFilterState = document.getElementById('emptyFilterState');
 const historyContainer = document.getElementById('historyContainer');
 
 function filterHistory() {
+    if (!searchInput || !feedbackFilter || !categoryFilter) return;
+
     const searchTerm = searchInput.value.toLowerCase();
     const feedbackValue = feedbackFilter.value;
     const categoryValue = categoryFilter.value;
 
     let visibleCount = 0;
+    const totalCount = historyCards.length;
 
     historyCards.forEach(card => {
-        const equipment = card.getAttribute('data-equipment');
-        const category = card.getAttribute('data-category');
-        const feedback = card.getAttribute('data-feedback');
+        const equipment = card.getAttribute('data-equipment') || '';
+        const category = card.getAttribute('data-category') || '';
+        const feedback = card.getAttribute('data-feedback') || '';
 
         const matchesSearch = equipment.includes(searchTerm) ||
             category.includes(searchTerm) ||
@@ -51,32 +60,41 @@ function filterHistory() {
         }
     });
 
-    // Show/hide empty state
-    if (visibleCount === 0) {
-        emptyState.style.display = 'block';
-        historyContainer.style.display = 'none';
+    // Show/hide empty states
+    if (totalCount === 0) {
+        // No bookings at all (already handled by Blade initial display, but for safety)
+        if (emptyState) emptyState.style.display = 'block';
+        if (emptyFilterState) emptyFilterState.style.display = 'none';
+        if (historyContainer) historyContainer.style.display = 'none';
+    } else if (visibleCount === 0) {
+        // Bookings exist but none match filters
+        if (emptyState) emptyState.style.display = 'none';
+        if (emptyFilterState) emptyFilterState.style.display = 'block';
+        if (historyContainer) historyContainer.style.display = 'none';
     } else {
-        emptyState.style.display = 'none';
-        historyContainer.style.display = 'grid';
+        // Bookings match filters
+        if (emptyState) emptyState.style.display = 'none';
+        if (emptyFilterState) emptyFilterState.style.display = 'none';
+        if (historyContainer) historyContainer.style.display = 'grid';
     }
 }
 
 // Event listeners for filters
-searchInput.addEventListener('input', filterHistory);
-feedbackFilter.addEventListener('change', filterHistory);
-categoryFilter.addEventListener('change', filterHistory);
+if (searchInput) searchInput.addEventListener('input', filterHistory);
+if (feedbackFilter) feedbackFilter.addEventListener('change', filterHistory);
+if (categoryFilter) categoryFilter.addEventListener('change', filterHistory);
 
 // Reset filters
 function resetFilters() {
-    searchInput.value = '';
-    feedbackFilter.value = 'all';
-    categoryFilter.value = 'all';
+    if (searchInput) searchInput.value = '';
+    if (feedbackFilter) feedbackFilter.value = 'all';
+    if (categoryFilter) categoryFilter.value = 'all';
     filterHistory();
 }
 
 // View history details
 function viewHistoryDetails(historyId) {
-    alert('Viewing details for history item #' + historyId + '\n\nThis would show detailed rental history information in a real application.');
+    alert('Viewing details for history item #' + historyId);
 }
 
 // Submit feedback
@@ -84,16 +102,7 @@ function submitFeedback(historyId) {
     window.location.href = '/student/feedback/' + historyId;
 }
 
-// Add hover effects to history cards
-historyCards.forEach(card => {
-    card.addEventListener('mouseenter', function () {
-        this.style.transform = 'translateY(-5px)';
-    });
-
-    card.addEventListener('mouseleave', function () {
-        this.style.transform = 'translateY(0)';
-    });
-});
-
 // Initialize filter
-filterHistory();
+if (historyCards.length > 0) {
+    filterHistory();
+}

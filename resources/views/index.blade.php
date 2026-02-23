@@ -127,7 +127,7 @@ session_start();
                             <span class="badge-category">Indoor</span>
                             <h4>Indoor Sports</h4>
                             <p>Table tennis, badminton, chess, carrom, and more indoor equipment.</p>
-                            <a href="#" class="btn btn-outline-primary btn-sm">View Equipment</a>
+                            <a href="{{ route('student.equipment-list') }}" class="btn btn-outline-primary btn-sm">View Equipment</a>
                         </div>
                     </div>
                 </div>
@@ -138,7 +138,7 @@ session_start();
                             <span class="badge-category">Outdoor</span>
                             <h4>Outdoor Sports</h4>
                             <p>Football, cricket, basketball, volleyball, and other outdoor gear.</p>
-                            <a href="#" class="btn btn-outline-primary btn-sm">View Equipment</a>
+                            <a href="{{ route('student.equipment-list') }}" class="btn btn-outline-primary btn-sm">View Equipment</a>
                         </div>
                     </div>
                 </div>
@@ -149,7 +149,7 @@ session_start();
                             <span class="badge-category">Fitness</span>
                             <h4>Fitness Equipment</h4>
                             <p>Dumbbells, yoga mats, resistance bands, skipping ropes, and more.</p>
-                            <a href="#" class="btn btn-outline-primary btn-sm">View Equipment</a>
+                            <a href="{{ route('student.equipment-list') }}" class="btn btn-outline-primary btn-sm">View Equipment</a>
                         </div>
                     </div>
                 </div>
@@ -160,7 +160,7 @@ session_start();
                             <span class="badge-category">Other</span>
                             <h4>Other Equipment</h4>
                             <p>Camping gear, hiking equipment, adventure sports gear, and more.</p>
-                            <a href="#" class="btn btn-outline-primary btn-sm">View Equipment</a>
+                            <a href="{{ route('student.equipment-list') }}" class="btn btn-outline-primary btn-sm">View Equipment</a>
                         </div>
                     </div>
                 </div>
@@ -332,7 +332,7 @@ session_start();
                 </div>
             </div>
             <div class="text-center mt-5">
-                <a href="#" class="btn btn-primary">View All Equipment</a>
+                <a href="{{ route('student.login') }}" class="btn btn-primary">View All Equipment</a>
             </div>
         </div>
     </section>
@@ -358,8 +358,8 @@ session_start();
                         <div class="feature-icon">
                             <span class="display-6">2</span>
                         </div>
-                        <h4>Add to Cart</h4>
-                        <p>Add items to your cart and select preferred pickup/return dates.</p>
+                        <h4>Submit Request</h4>
+                        <p>Submit your booking request for approval by sports department staff.</p>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -367,8 +367,8 @@ session_start();
                         <div class="feature-icon">
                             <span class="display-6">3</span>
                         </div>
-                        <h4>Submit Request</h4>
-                        <p>Submit your booking request for approval by sports department staff.</p>
+                         <h4>Pickup & Return</h4>
+                        <p>Collect approved equipment and return on time to avoid penalties.</p>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -397,9 +397,9 @@ session_start();
                             The equipment rental process is so easy and convenient. I can book footballs for our weekend matches with just a few clicks!
                         </div>
                         <div class="testimonial-author">
-                            <div class="author-avatar">SM</div>
+                            <div class="author-avatar">S</div>
                             <div class="author-info">
-                                <h5>Sanjay Mali</h5>
+                                <h5>Sanjay</h5>
                                 <p>Football Team Captain</p>
                             </div>
                         </div>
@@ -411,9 +411,9 @@ session_start();
                             As a fitness enthusiast, I regularly rent dumbbells and yoga mats. The quality is excellent and the deposit return process is seamless.
                         </div>
                         <div class="testimonial-author">
-                            <div class="author-avatar">MJ</div>
+                            <div class="author-avatar">M</div>
                             <div class="author-info">
-                                <h5>Mitesh Jat</h5>
+                                <h5>Mitesh</h5>
                                 <p>Fitness Club Member</p>
                             </div>
                         </div>
@@ -425,7 +425,7 @@ session_start();
                             The admin dashboard makes it easy to manage equipment and approve requests. Analytics reports help us track usage patterns.
                         </div>
                         <div class="testimonial-author">
-                            <div class="author-avatar">DS</div>
+                            <div class="author-avatar">D</div>
                             <div class="author-info">
                                 <h5>Dipak Suthar</h5>
                                 <p>Sports Department Staff</p>

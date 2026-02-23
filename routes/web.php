@@ -29,6 +29,7 @@ Route::prefix('student')->name('student.')->group(function () {
     Route::get('/request-book/{id?}', [StudentController::class, 'requestBook'])->name('request-book');
     Route::post('/request-book', [StudentController::class, 'submitBooking'])->name('request-book.submit');
     Route::get('/feedback/{id?}', [StudentController::class, 'feedback'])->name('feedback');
+    Route::post('/feedback', [StudentController::class, 'submitFeedback'])->name('feedback.submit');
     
     // Public/Auth agnostic
     Route::get('/forgot-password', function () { return view('student.forgot-password'); })->name('forgot-password');

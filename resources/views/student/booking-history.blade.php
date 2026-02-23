@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -96,7 +95,7 @@
                 <div class="stat-icon">
                     <i class="fas fa-history"></i>
                 </div>
-                <div class="stat-value"><?php echo $total_bookings; ?></div>
+                <div class="stat-value">{{ $total_bookings }}</div>
                 <div class="stat-label">Total Bookings</div>
             </div>
             
@@ -104,7 +103,7 @@
                 <div class="stat-icon">
                     <i class="fas fa-comment-dots"></i>
                 </div>
-                <div class="stat-value"><?php echo $feedback_pending_count; ?></div>
+                <div class="stat-value">{{ $feedback_pending_count }}</div>
                 <div class="stat-label">Pending Feedback</div>
             </div>
         </div>
@@ -134,11 +133,11 @@
         
         <!-- History Cards -->
         <div class="history-container" id="historyContainer">
-            <?php foreach ($history as $item): ?>
+            @foreach ($history as $item)
             <div class="history-card" 
-                 data-equipment="<?php echo strtolower($item->equipment->name ?? 'N/A'); ?>"
-                 data-category="<?php echo strtolower($item->equipment->category ?? 'General'); ?>"
-                 data-feedback="<?php echo 'pending'; ?>">
+                 data-equipment="{{ strtolower($item->equipment->name ?? 'N/A') }}"
+                 data-category="{{ strtolower($item->equipment->category ?? 'General') }}"
+                 data-feedback="{{ $item->feedback ? 'submitted' : 'pending' }}">
                 <div class="history-header">
                     <div class="history-title">
                         <div class="history-icon" style="overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f8f9fa; border-radius: 10px;">
@@ -149,8 +148,8 @@
                             @endif
                         </div>
                         <div class="history-details">
-                            <h5><?php echo $item->equipment->name ?? 'N/A'; ?></h5>
-                            <p><?php echo $item->equipment->category ?? 'General'; ?></p>
+                            <h5>{{ $item->equipment->name ?? 'N/A' }}</h5>
+                            <p>{{ $item->equipment->category ?? 'General' }}</p>
                         </div>
                     </div>
                     <span class="badge" style="background: rgba(0, 201, 167, 0.1); color: var(--accent); padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600;">
@@ -162,27 +161,27 @@
                     <div class="history-info">
                         <div class="info-item">
                             <span class="info-label">Booking ID</span>
-                            <span class="info-value">#BH-<?php echo str_pad($item->id, 3, '0', STR_PAD_LEFT); ?></span>
+                            <span class="info-value">#BH-{{ str_pad($item->id, 3, '0', STR_PAD_LEFT) }}</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Quantity</span>
-                            <span class="info-value"><?php echo $item->quantity; ?> items</span>
+                            <span class="info-value">{{ $item->quantity }} items</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Booked Date</span>
-                            <span class="info-value"><?php echo $item->created_at->format('Y-m-d'); ?></span>
+                            <span class="info-value">{{ $item->created_at->format('Y-m-d') }}</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Pickup Date</span>
-                            <span class="info-value"><?php echo $item->booking_date; ?></span>
+                            <span class="info-value">{{ $item->booking_date }}</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Returned Date</span>
-                            <span class="info-value"><?php echo $item->return_date; ?></span>
+                            <span class="info-value">{{ $item->return_date ?? 'N/A' }}</span>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Deposit</span>
-                            <span class="info-value">₹<?php echo $item->equipment->deposit ?? '0'; ?></span>
+                            <span class="info-value">₹{{ $item->equipment->deposit ?? '0' }}</span>
                         </div>
                     </div>
                     
@@ -190,32 +189,58 @@
                         <div class="feedback-header">
                             <div>
                                 <strong>Feedback Status:</strong>
-                                <span class="badge bg-warning" style="margin-left: 0.5rem;">
-                                    Pending
-                                </span>
+                                @if($item->feedback)
+                                    <span class="badge bg-success" style="margin-left: 0.5rem;">
+                                        Submitted
+                                    </span>
+                                @else
+                                    <span class="badge bg-warning" style="margin-left: 0.5rem;">
+                                        Pending
+                                    </span>
+                                @endif
                             </div>
                             <div class="rating-display">
-                                <span class="no-rating">No rating yet</span>
+                                @if($item->feedback)
+                                    <div class="stars">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <i class="fas fa-star {{ $i <= $item->feedback->overall_rating ? 'text-warning' : 'text-muted' }}"></i>
+                                        @endfor
+                                    </div>
+                                @else
+                                    <span class="no-rating">No rating yet</span>
+                                @endif
                             </div>
                         </div>
                     </div>
                     
                     <div class="history-actions">
-                        <button class="btn-action btn-view" onclick="viewHistoryDetails(<?php echo $item->id; ?>)">
+                        <button class="btn-action btn-view" onclick="viewHistoryDetails({{ $item->id }})">
                             <i class="fas fa-eye"></i> View Details
                         </button>
-                        <button class="btn-action btn-feedback" onclick="submitFeedback(<?php echo $item->id; ?>)">
+                        @if(!$item->feedback && $item->status === 'returned')
+                        <button class="btn-action btn-feedback" onclick="submitFeedback({{ $item->id }})">
                             <i class="fas fa-star"></i> Give Feedback
                         </button>
+                        @endif
                     </div>
                 </div>
             </div>
-            <?php endforeach; ?>
+            @endforeach
         </div>
         
-        <!-- Empty State (hidden by default) -->
-        <div class="empty-state" id="emptyState" style="display: none;">
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display: {{ count($history) == 0 ? 'block' : 'none' }};">
             <i class="fas fa-history"></i>
+            <h4>No past bookings found</h4>
+            <p>Your finished rentals will appear here</p>
+            <a href="{{ route('student.equipment-list') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i> Request Your First Equipment
+            </a>
+        </div>
+
+        <!-- Empty Filter State -->
+        <div class="empty-state" id="emptyFilterState" style="display: none;">
+            <i class="fas fa-search"></i>
             <h4>No matching bookings found</h4>
             <p>Try adjusting your search or filter criteria</p>
             <button class="btn btn-primary" onclick="resetFilters()">
@@ -225,7 +250,7 @@
         
         <!-- Footer -->
         <div class="footer">
-            <p class="mb-0">© <?php echo date("Y"); ?> Sports Equipment Rental Portal | Booking History</p>
+            <p class="mb-0">© {{ date("Y") }} Sports Equipment Rental Portal | Booking History</p>
         </div>
     </div>
 

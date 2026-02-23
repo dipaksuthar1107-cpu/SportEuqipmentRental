@@ -1,9 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Submit Feedback | Sports Rental</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -94,7 +94,11 @@
         <div class="equipment-info">
             <div class="equipment-details">
                 <div class="equipment-icon">
-                    <i class="{{ $equipment_icon ?? 'fas fa-box' }}"></i>
+                    @if($booking->equipment->image)
+                        <img src="{{ asset('storage/' . $booking->equipment->image) }}" alt="{{ $booking->equipment->name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+                    @else
+                        <i class="{{ $equipment_icon ?? 'fas fa-box' }}"></i>
+                    @endif
                 </div>
                 <div class="equipment-text">
                     <h5>{{ $equipment_name ?? 'Equipment' }}</h5>
@@ -119,6 +123,8 @@
             <div class="feedback-body">
                 <!-- Main Form -->
                 <form id="feedbackForm">
+                    @csrf
+                    <input type="hidden" name="booking_id" value="{{ $booking_id }}">
                     <!-- Overall Rating -->
                     <div class="rating-section">
                         <label class="form-label">
@@ -149,7 +155,7 @@
                             <i class="fas fa-clipboard-check"></i>
                             Equipment Condition
                         </label>
-                        <select class="form-select" id="equipmentCondition" required>
+                        <select class="form-select" id="equipmentCondition" name="condition" required>
                             <option value="">How was the equipment condition?</option>
                             <option value="excellent">Excellent - Like new</option>
                             <option value="good">Good - Minor signs of use</option>
@@ -222,7 +228,7 @@
                             <i class="fas fa-comment-dots"></i>
                             Detailed Feedback
                         </label>
-                        <textarea class="form-control" id="comments" rows="4" placeholder="Share your detailed experience, suggestions, or any issues you faced..." required></textarea>
+                        <textarea class="form-control" id="comments" name="comments" rows="4" placeholder="Share your detailed experience, suggestions, or any issues you faced..." required></textarea>
                         <div class="form-text">Your comments help us improve our service</div>
                     </div>
                     
@@ -264,13 +270,13 @@
                 </form>
                 
                 <!-- Thank You Message (Initially hidden) -->
-                <div class="thank-you-message" id="thankYouMessage">
+                <div class="thank-you-message" id="thankYouMessage" style="display: none;">
                     <div class="thank-you-icon">
                         <i class="fas fa-check-circle"></i>
                     </div>
                     <h3>Thank You for Your Feedback!</h3>
                     <p>Your feedback has been submitted successfully. We appreciate you taking the time to share your experience with us. Your input helps us improve our equipment and service for everyone.</p>
-                    <a href="dashboard.php" class="btn btn-primary">
+                    <a href="{{ route('student.dashboard') }}" class="btn btn-primary">
                         <i class="fas fa-home me-2"></i> Back to Dashboard
                     </a>
                 </div>

@@ -104,13 +104,13 @@
         <!-- Request Form -->
         <div class="request-card">
             <div class="request-header">
-                <div class="request-icon" style="overflow: hidden; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 12px; border: 1px solid #eee;">
+                <!-- <div class="request-icon" style="overflow: hidden; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 12px; border: 1px solid #eee;">
                     @if($equipment->image)
                         <img src="{{ asset('storage/' . $equipment->image) }}" alt="{{ $equipment->name }}" style="width: 100%; height: 100%; object-fit: cover;">
                     @else
                         <i class="fas fa-calendar-plus"></i>
                     @endif
-                </div>
+                </div> -->
                 <h4>Booking Request Form</h4>
                 <p>Fill in the details for your equipment rental</p>
             </div>
