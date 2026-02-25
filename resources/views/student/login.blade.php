@@ -59,6 +59,13 @@
         </div>
         
         <div class="login-body">
+            @if(request()->has('error'))
+            <div class="alert alert-danger fade-in">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ request()->get('error') }}
+            </div>
+            @endif
+
             <!-- Error handling using Laravel Blade -->
             @if ($errors->any())
             <div class="alert alert-danger fade-in">

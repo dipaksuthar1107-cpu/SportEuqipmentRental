@@ -57,12 +57,8 @@ class StudentController extends Controller
             ]);
         }
 
-        // Get student email from session
-        $student_email = session('student_email', 'student@example.com');
-        
-        // Extract name from email (temporary until we have database)
-        $student_name = explode('@', $student_email)[0];
-        $student_name = ucfirst(str_replace('.', ' ', $student_name));
+        // Get student name from session (set during login)
+        $student_name = session('student_name', 'Student');
 
         // Real stats from database
         $data = [

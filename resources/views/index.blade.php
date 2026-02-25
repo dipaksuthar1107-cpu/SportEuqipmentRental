@@ -127,7 +127,7 @@ session_start();
                             <span class="badge-category">Indoor</span>
                             <h4>Indoor Sports</h4>
                             <p>Table tennis, badminton, chess, carrom, and more indoor equipment.</p>
-                            <a href="{{ route('student.equipment-list') }}" class="btn btn-outline-primary btn-sm">View Equipment</a>
+                            <a href="{{ route('student.login') }}?error=Please login first to view equipment" class="btn btn-outline-primary btn-sm">View Equipment</a>
                         </div>
                     </div>
                 </div>
@@ -138,7 +138,7 @@ session_start();
                             <span class="badge-category">Outdoor</span>
                             <h4>Outdoor Sports</h4>
                             <p>Football, cricket, basketball, volleyball, and other outdoor gear.</p>
-                            <a href="{{ route('student.equipment-list') }}" class="btn btn-outline-primary btn-sm">View Equipment</a>
+                            <a href="{{ route('student.login') }}?error=Please login first to view equipment" class="btn btn-outline-primary btn-sm">View Equipment</a>
                         </div>
                     </div>
                 </div>
@@ -149,7 +149,7 @@ session_start();
                             <span class="badge-category">Fitness</span>
                             <h4>Fitness Equipment</h4>
                             <p>Dumbbells, yoga mats, resistance bands, skipping ropes, and more.</p>
-                            <a href="{{ route('student.equipment-list') }}" class="btn btn-outline-primary btn-sm">View Equipment</a>
+                            <a href="{{ route('student.login') }}?error=Please login first to view equipment" class="btn btn-outline-primary btn-sm">View Equipment</a>
                         </div>
                     </div>
                 </div>
@@ -160,7 +160,7 @@ session_start();
                             <span class="badge-category">Other</span>
                             <h4>Other Equipment</h4>
                             <p>Camping gear, hiking equipment, adventure sports gear, and more.</p>
-                            <a href="{{ route('student.equipment-list') }}" class="btn btn-outline-primary btn-sm">View Equipment</a>
+                            <a href="{{ route('student.login') }}?error=Please login first to view equipment" class="btn btn-outline-primary btn-sm">View Equipment</a>
                         </div>
                     </div>
                 </div>
@@ -307,7 +307,7 @@ session_start();
                         <div class="testimonial-author">
                             <div class="author-avatar">D</div>
                             <div class="author-info">
-                                <h5>Dipak Suthar</h5>
+                                <h5>Staff Member</h5>
                                 <p>Sports Department Staff</p>
                             </div>
                         </div>
@@ -376,7 +376,7 @@ session_start();
                         <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
                         <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
                         <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-                        <a href="https://www.linkedin.com/in/dipak-suthar0560" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-6 mb-4">
@@ -406,8 +406,8 @@ session_start();
                         <h5>Contact Info</h5>
                         <ul>
                             <li><i class="fas fa-map-marker-alt me-2"></i> Sports Complex, University Campus</li>
-                            <li><i class="fas fa-phone me-2"></i><a href="tel:+916352364846"> +91 6352364846</a></li>
-                            <li><i class="fas fa-envelope me-2"></i><a href="mailto:dipaksuthar1107@gmail.com"> dipaksuthar1107@gmail.com</a></li>
+                            <li><i class="fas fa-phone me-2"></i><a href="tel:+911234567890"> +91 1234567890</a></li>
+                            <li><i class="fas fa-envelope me-2"></i><a href="mailto:info@sportrental.com"> info@sportrental.com</a></li>
                             <li><i class="fas fa-clock me-2"></i> Mon-Fri: 9AM-6PM, Sat: 10AM-4PM</li>
                         </ul>
                     </div>
