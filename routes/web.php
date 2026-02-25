@@ -11,7 +11,8 @@ use App\Http\Controllers\Admin\AdminController;
 */
 
 Route::get('/', function () {
-    return view('index');
+    $equipment = \App\Models\Equipment::whereHas('penalties')->latest()->get();
+    return view('index', compact('equipment'));
 });
 
 Route::prefix('student')->name('student.')->group(function () {

@@ -32,4 +32,9 @@ class Equipment extends Model
         'rules' => 'array',
         'features' => 'array',
     ];
+
+    public function penalties()
+    {
+        return $this->hasMany(Penalty::class);
+    }
 }

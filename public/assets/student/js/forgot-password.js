@@ -118,21 +118,36 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Handle resend button click
     resendBtn.addEventListener('click', function () {
-        // Show loading state
         resendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resending...';
         resendBtn.disabled = true;
 
-        // Simulate API call delay
-        setTimeout(() => {
-            // Reset button
-            resendBtn.innerHTML = 'Resend Link';
-            resendBtn.disabled = false;
+        const email = userEmailSpan.textContent.trim() || emailInput.value.trim();
+        const verificationInput = document.querySelector('input[name="verification"]:checked');
+        const verification = verificationInput ? verificationInput.value : 'email';
+        const csrfToken = document.querySelector('input[name="_token"]').value;
 
-            // Show notification
-            showNotification('New reset link sent successfully!');
-
-            console.log('Resend link requested');
-        }, 1000);
+        fetch('/student/resend-otp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ email: email, verification: verification })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message || 'New OTP sent successfully!');
+                } else {
+                    showNotification('Error: ' + (data.message || 'Could not resend OTP.'));
+                }
+            })
+            .catch(() => showNotification('Failed to resend. Please try again.'))
+            .finally(() => {
+                resendBtn.innerHTML = 'Resend Link';
+                resendBtn.disabled = false;
+            });
     });
 
     // Notification function

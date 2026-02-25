@@ -176,160 +176,40 @@ session_start();
                 <p class="text-muted">Browse our most frequently rented items</p>
             </div>
             <div class="row g-4">
+                @foreach($equipment as $item)
                 <div class="col-md-3">
                     <div class="equipment-card">
                         <div class="equipment-img">
-                            <i class="fas fa-table-tennis"></i>
+                            @if($item->image)
+                                <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" class="img-fluid rounded" style="height: 100%; width: 100%; object-fit: cover;">
+                            @else
+                                <i class="{{ $item->icon ?? 'fas fa-tools' }}"></i>
+                            @endif
                         </div>
                         <div class="equipment-content">
-                            <h4>Table Tennis Set</h4>
-                            <p class="text-muted small mb-3">Complete set with paddles, balls, and net</p>
+                            <h4>{{ $item->name }}</h4>
+                            <p class="text-muted small mb-3">{{ Str::limit($item->description, 50) }}</p>
                             <div class="equipment-meta">
-                                <span><i class="fas fa-box me-1"></i> 8 left</span>
-                                <span><i class="fas fa-tag me-1"></i> Indoor</span>
+                                <span><i class="fas fa-box me-1"></i> {{ $item->available }} left</span>
+                                <span><i class="fas fa-tag me-1"></i> {{ $item->category }}</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="equipment-price">$20 deposit</div>
-                                <span class="equipment-status status-available">Available</span>
+                                <div class="equipment-price">${{ $item->deposit }} deposit</div>
+                                <span class="equipment-status {{ $item->available > 5 ? 'status-available' : ($item->available > 0 ? 'status-low' : 'status-unavailable') }}">
+                                    {{ $item->available > 5 ? 'Available' : ($item->available > 0 ? 'Low Stock' : 'Out of Stock') }}
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="equipment-card">
-                        <div class="equipment-img">
-                            <i class="fas fa-futbol"></i>
-                        </div>
-                        <div class="equipment-content">
-                            <h4>Football</h4>
-                            <p class="text-muted small mb-3">Size 5 professional match football</p>
-                            <div class="equipment-meta">
-                                <span><i class="fas fa-box me-1"></i> 12 left</span>
-                                <span><i class="fas fa-tag me-1"></i> Outdoor</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="equipment-price">$15 deposit</div>
-                                <span class="equipment-status status-available">Available</span>
-                            </div>
-                        </div>
+                @endforeach
+
+                @if($equipment->isEmpty())
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-info-circle fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No equipment available at the moment. Please check back later.</p>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="equipment-card">
-                        <div class="equipment-img">
-                            <i class="fas fa-dumbbell"></i>
-                        </div>
-                        <div class="equipment-content">
-                            <h4>Dumbbell Set (10kg)</h4>
-                            <p class="text-muted small mb-3">Pair of 10kg adjustable dumbbells</p>
-                            <div class="equipment-meta">
-                                <span><i class="fas fa-box me-1"></i> 5 left</span>
-                                <span><i class="fas fa-tag me-1"></i> Fitness</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="equipment-price">$25 deposit</div>
-                                <span class="equipment-status status-low">Low Stock</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="equipment-card">
-                        <div class="equipment-img">
-                            <i class="fas fa-basketball-ball"></i>
-                        </div>
-                        <div class="equipment-content">
-                            <h4>Basketball</h4>
-                            <p class="text-muted small mb-3">Official size 7 basketball</p>
-                            <div class="equipment-meta">
-                                <span><i class="fas fa-box me-1"></i> 10 left</span>
-                                <span><i class="fas fa-tag me-1"></i> Outdoor</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="equipment-price">$18 deposit</div>
-                                <span class="equipment-status status-available">Available</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row g-4 mt-2">
-                <div class="col-md-3">
-                    <div class="equipment-card">
-                        <div class="equipment-img">
-                            <i class="fas fa-table-tennis"></i>
-                        </div>
-                        <div class="equipment-content">
-                            <h4>Badminton Set</h4>
-                            <p class="text-muted small mb-3">2 rackets, shuttlecocks, and net</p>
-                            <div class="equipment-meta">
-                                <span><i class="fas fa-box me-1"></i> 6 left</span>
-                                <span><i class="fas fa-tag me-1"></i> Indoor</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="equipment-price">$22 deposit</div>
-                                <span class="equipment-status status-available">Available</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="equipment-card">
-                        <div class="equipment-img">
-                            <i class="fas fa-spa"></i>
-                        </div>
-                        <div class="equipment-content">
-                            <h4>Yoga Mat</h4>
-                            <p class="text-muted small mb-3">Premium non-slip yoga mat</p>
-                            <div class="equipment-meta">
-                                <span><i class="fas fa-box me-1"></i> 15 left</span>
-                                <span><i class="fas fa-tag me-1"></i> Fitness</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="equipment-price">$10 deposit</div>
-                                <span class="equipment-status status-available">Available</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="equipment-card">
-                        <div class="equipment-img">
-                            <i class="fas fa-volleyball-ball"></i>
-                        </div>
-                        <div class="equipment-content">
-                            <h4>Volleyball Set</h4>
-                            <p class="text-muted small mb-3">Complete volleyball set with net</p>
-                            <div class="equipment-meta">
-                                <span><i class="fas fa-box me-1"></i> 4 left</span>
-                                <span><i class="fas fa-tag me-1"></i> Outdoor</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="equipment-price">$30 deposit</div>
-                                <span class="equipment-status status-low">Low Stock</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="equipment-card">
-                        <div class="equipment-img">
-                            <i class="fas fa-chess"></i>
-                        </div>
-                        <div class="equipment-content">
-                            <h4>Chess Board</h4>
-                            <p class="text-muted small mb-3">Standard tournament chess set</p>
-                            <div class="equipment-meta">
-                                <span><i class="fas fa-box me-1"></i> 9 left</span>
-                                <span><i class="fas fa-tag me-1"></i> Indoor</span>
-                            </div>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="equipment-price">$5 deposit</div>
-                                <span class="equipment-status status-available">Available</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endif
             </div>
             <div class="text-center mt-5">
                 <a href="{{ route('student.login') }}" class="btn btn-primary">View All Equipment</a>

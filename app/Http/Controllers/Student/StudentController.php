@@ -349,45 +349,56 @@ class StudentController extends Controller
 
     public function sendOtp(Request $request)
     {
-        $email = $request->email ?? session('reset_email');
-        $verification = $request->verification ?? session('reset_method', 'email');
+        try {
+            $email        = $request->email ?? session('reset_email');
+            $verification = $request->verification ?? session('reset_method', 'email');
 
-        if (!$email) {
-            return response()->json(['success' => false, 'message' => 'Email session expired.']);
+            if (!$email) {
+                return response()->json(['success' => false, 'message' => 'Email is required.']);
+            }
+
+            $user = User::where('email', $email)->first();
+            if (!$user) {
+                return response()->json(['success' => false, 'message' => 'No account found with this email address.']);
+            }
+
+            $otp = sprintf("%06d", mt_rand(100000, 999999));
+
+            DB::table('password_resets')->updateOrInsert(
+                ['email' => $email],
+                ['token' => $otp, 'created_at' => Carbon::now()]
+            );
+
+            if ($verification === 'email') {
+                try {
+                    Mail::to($email)->send(new PasswordResetMail($user->name, $otp));
+                    $message = "OTP sent successfully to {$email}!";
+                } catch (\Exception $mailEx) {
+                    \Illuminate\Support\Facades\Log::error('Student mail send failed: ' . $mailEx->getMessage());
+                    return response()->json(['success' => false, 'message' => 'Failed to send email. Please check your inbox or try again. Error: ' . $mailEx->getMessage()]);
+                }
+            } else {
+                $smsService = new SmsService();
+                $phone = $user->phone ?? '1234567890';
+                $smsService->sendSms($phone, "Sports Rental: Your reset OTP is: " . $otp);
+                $message = "OTP sent via SMS!";
+            }
+
+            session([
+                'reset_email'  => $email,
+                'reset_method' => $verification
+            ]);
+
+            return response()->json([
+                'success'  => true,
+                'message'  => $message,
+                'redirect' => route('student.verify-otp')
+            ]);
+
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('sendOtp error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Something went wrong: ' . $e->getMessage()]);
         }
-
-        $user = User::where('email', $email)->first();
-        if (!$user) {
-            return response()->json(['success' => false, 'message' => 'User not found.']);
-        }
-        $otp = sprintf("%06d", mt_rand(1, 999999));
-
-        DB::table('password_resets')->updateOrInsert(
-            ['email' => $email],
-            ['token' => $otp, 'created_at' => Carbon::now()]
-        );
-
-        if ($request->verification === 'email') {
-            Mail::to($request->email)->send(new PasswordResetMail($user->name, $otp));
-            $message = "OTP sent to your email!";
-        } else {
-            $smsService = new SmsService();
-            $phone = $user->phone ?? '1234567890'; 
-            $smsService->sendSms($phone, "Sports Rental: Your reset OTP is: " . $otp);
-            $message = "OTP sent via SMS!";
-        }
-
-        // Store info in session for verify page and resend
-        session([
-            'reset_email' => $email,
-            'reset_method' => $verification
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => $message,
-            'redirect' => route('student.verify-otp')
-        ]);
     }
 
     public function showVerifyOtpForm()
