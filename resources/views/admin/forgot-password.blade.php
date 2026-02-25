@@ -6,7 +6,8 @@
     <title>Admin Password Recovery | Sports Rental</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('/assets/student/css/forgot-password.css') }}">
+    <!-- Admin Recovery CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/recovery.css') }}">
 </head>
 <body>
     <div class="container">
@@ -77,6 +78,7 @@
             </div>
         </div>
     </div>
-    <script src="{{ asset('/assets/student/js/forgot-password.js') }}"></script>
+    <!-- Admin Recovery JS -->
+    <script src="{{ asset('assets/admin/js/recovery.js') }}"></script>
 </body>
 </html>

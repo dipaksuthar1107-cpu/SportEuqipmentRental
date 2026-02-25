@@ -500,11 +500,6 @@ body {
     color: #8e44ad;
 }
 
-.status-rejected {
-    background-color: rgba(247, 37, 133, 0.15);
-    color: #c2185b;
-}
-
 /* Buttons */
 .btn {
     border-radius: 10px;

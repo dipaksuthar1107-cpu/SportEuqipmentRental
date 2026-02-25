@@ -6,7 +6,8 @@
     <title>Admin Reset Password | Secure Portal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('/assets/student/css/forgot-password.css') }}">
+    <!-- Admin Recovery CSS -->
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/recovery.css') }}">
 </head>
 <body>
     <div class="container">
@@ -49,7 +50,7 @@
                         <input type="password" name="password_confirmation" id="password_confirmation" required>
                     </div>
                     
-                    <button type="submit" class="submit-btn" style="background: #333; width: 100%; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer;">
+                    <button type="submit" class="submit-btn">
                         Update Admin Password <i class="fas fa-shield-alt"></i>
                     </button>
                     
@@ -61,5 +62,7 @@
             </div>
         </div>
     </div>
+    <!-- Admin Recovery JS -->
+    <script src="{{ asset('assets/admin/js/recovery.js') }}"></script>
 </body>
 </html>
