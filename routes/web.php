@@ -11,7 +11,7 @@ use App\Http\Controllers\Admin\AdminController;
 */
 
 Route::get('/', function () {
-    $equipment = \App\Models\Equipment::whereHas('penalties')->latest()->get();
+    $equipment = \App\Models\Equipment::latest()->take(8)->get();
     return view('index', compact('equipment'));
 });
 
