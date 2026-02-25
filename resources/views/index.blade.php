@@ -212,7 +212,7 @@ session_start();
                 @endif
             </div>
             <div class="text-center mt-5">
-                <a href="{{ route('student.login') }}" class="btn btn-primary">View All Equipment</a>
+                <a href="{{ route('student.login') }}?error=Please login first to view equipment" class="btn btn-primary">View All Equipment</a>
             </div>
         </div>
     </section>
@@ -256,8 +256,8 @@ session_start();
                         <div class="feature-icon">
                             <span class="display-6">4</span>
                         </div>
-                        <h4>Pickup & Return</h4>
-                        <p>Collect approved equipment and return on time to avoid penalties.</p>
+                        <h4>Feedback</h4>
+                        <p>Students can provide feedback after returning the equipment.</p>
                     </div>
                 </div>
             </div>
@@ -307,7 +307,7 @@ session_start();
                         <div class="testimonial-author">
                             <div class="author-avatar">D</div>
                             <div class="author-info">
-                                <h5>Staff Member</h5>
+                                <h5>Dipak</h5>
                                 <p>Sports Department Staff</p>
                             </div>
                         </div>
@@ -376,7 +376,7 @@ session_start();
                         <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
                         <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
                         <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="https://www.linkedin.com/in/dipak-suthar0560" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-6 mb-4">
@@ -396,8 +396,8 @@ session_start();
                         <ul>
                             <li><a href="{{ route('student.login') }}">Login</a></li>
                             <li><a href="{{ route('student.register') }}">Register</a></li>
-                            <li><a href="{{ route('student.booking-status') }}">My Bookings</a></li>
-                            <li><a href="{{ route('student.feedback') }}">Submit Feedback</a></li>
+                            <li><a href="{{ route('student.login') }}?error=Please login first to view equipment">My Bookings</a></li>
+                            <li><a href="{{ route('student.login') }}?error=Please login first to view equipment">Submit Feedback</a></li>
                         </ul>
                     </div>
                 </div>
@@ -406,8 +406,8 @@ session_start();
                         <h5>Contact Info</h5>
                         <ul>
                             <li><i class="fas fa-map-marker-alt me-2"></i> Sports Complex, University Campus</li>
-                            <li><i class="fas fa-phone me-2"></i><a href="tel:+911234567890"> +91 1234567890</a></li>
-                            <li><i class="fas fa-envelope me-2"></i><a href="mailto:info@sportrental.com"> info@sportrental.com</a></li>
+                            <li><i class="fas fa-phone me-2"></i><a href="tel:+911234567890"> +91 6352364846</a></li>
+                            <li><i class="fas fa-envelope me-2"></i><a href="mailto:dipaksuthar1107@gmail.com"> dipaksuthar1107@gmail.com</a></li>
                             <li><i class="fas fa-clock me-2"></i> Mon-Fri: 9AM-6PM, Sat: 10AM-4PM</li>
                         </ul>
                     </div>
