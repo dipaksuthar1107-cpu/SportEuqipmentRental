@@ -33,7 +33,7 @@ Route::prefix('student')->name('student.')->group(function () {
     Route::post('/feedback', [StudentController::class, 'submitFeedback'])->name('feedback.submit');
     
     // Public/Auth agnostic
-    Route::get('/forgot-password', function () { return view('student.forgot-password'); })->name('forgot-password');
+    Route::get('/forgot-password', [StudentController::class, 'showForgotPasswordForm'])->name('forgot-password');
     Route::post('/forgot-password', [StudentController::class, 'sendOtp'])->name('forgot-password.submit');
     Route::post('/resend-otp', [StudentController::class, 'sendOtp'])->name('resend-otp');
     Route::get('/verify-otp', [StudentController::class, 'showVerifyOtpForm'])->name('verify-otp');
@@ -41,7 +41,7 @@ Route::prefix('student')->name('student.')->group(function () {
     Route::get('/reset-password', [StudentController::class, 'showResetForm'])->name('reset-password');
     Route::post('/reset-password', [StudentController::class, 'resetPassword'])->name('reset-password.submit');
     
-    Route::get('/register', function () { return view('student.register'); })->name('register');
+    Route::get('/register', [StudentController::class, 'showRegisterForm'])->name('register');
     Route::post('/register', [StudentController::class, 'registerPost'])->name('register.submit');
 });
 
@@ -51,7 +51,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/login', [AdminController::class, 'login']);
     Route::get('/logout', [AdminController::class, 'logout'])->name('logout');
 
-    Route::get('/forgot-password', function () { return view('admin.forgot-password'); })->name('forgot-password');
+    Route::get('/forgot-password', [AdminController::class, 'showForgotPasswordForm'])->name('forgot-password');
     Route::post('/forgot-password', [AdminController::class, 'sendOtp'])->name('forgot-password.submit');
     Route::post('/resend-otp', [AdminController::class, 'sendOtp'])->name('resend-otp');
     Route::get('/verify-otp', [AdminController::class, 'showVerifyOtpForm'])->name('verify-otp');

@@ -24,6 +24,16 @@ class StudentController extends Controller
         return view('student.login');
     }
 
+    public function showRegisterForm()
+    {
+        return view('student.register');
+    }
+
+    public function showForgotPasswordForm()
+    {
+        return view('student.forgot-password');
+    }
+
     public function login(Request $request)
     {
         $request->validate([
