@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: sport_rental_app
+    container_name: sport_rental_app
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+      - /var/www/html/vendor
+    depends_on:
+      - db
+    networks:
+      - sport_network
+
+  db:
+    image: mysql:8.0
+    container_name: sport_rental_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: sport_portal
+      MYSQL_ROOT_PASSWORD: secret_root_password
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: secret_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - sport_network
+
+networks:
+  sport_network:
+    driver: bridge
+
+volumes:
+  dbdata:
