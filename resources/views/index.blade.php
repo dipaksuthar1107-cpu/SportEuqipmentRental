@@ -374,8 +374,8 @@ session_start();
                     <p>Providing premium sports equipment rental services for students and staff with easy booking, flexible options, and excellent support.</p>
                     <div class="social-icons">
                         <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a>
-                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/916352364846" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://www.instagram.com/dipak_0560?igsh=MmRiOTdsMm5wZmNt" class="social-icon"><i class="fab fa-instagram"></i></a>
                         <a href="https://www.linkedin.com/in/dipak-suthar0560" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
