@@ -31,9 +31,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copy the existing application directory contents
 COPY . /var/www/html
 
-# Install application dependencies (if vendor directory is not copied)
-# Uncomment the following line to install dependencies during the image build
-# RUN composer install --no-interaction --optimize-autoloader --no-dev
+# Install application dependencies
+RUN composer install --no-interaction --optimize-autoloader --no-dev
 
 # Set proper permissions for Laravel storage and cache directories
 RUN chown -R www-data:www-data /var/www/html \
