@@ -194,7 +194,7 @@ session_start();
                                 <span><i class="fas fa-tag me-1"></i> {{ $item->category }}</span>
                             </div>
                             <div class="d-flex justify-content-between align-items-center">
-                                <div class="equipment-price">${{ $item->deposit }} deposit</div>
+                                <div class="equipment-price">₹{{ $item->deposit }} deposit</div>
                                 <span class="equipment-status {{ $item->available > 5 ? 'status-available' : ($item->available > 0 ? 'status-low' : 'status-unavailable') }}">
                                     {{ $item->available > 5 ? 'Available' : ($item->available > 0 ? 'Low Stock' : 'Out of Stock') }}
                                 </span>

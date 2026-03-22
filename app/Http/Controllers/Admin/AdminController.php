@@ -128,25 +128,31 @@ class AdminController extends Controller
         return view('admin.booking', compact('bookings'));
     }
 
-    public function report()
+    public function report(Request $request)
     {
         if (!session('admin_login')) {
             return redirect()->route('admin.login')->withErrors(['message' => 'Please login first.']);
         }
 
+        $fromDate = $request->input('from_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $toDate = $request->input('to_date', Carbon::now()->format('Y-m-d'));
+
+        $startQuery = $fromDate . ' 00:00:00';
+        $endQuery = $toDate . ' 23:59:59';
+
         // 1. Basic Stats
         $totalEquipmentCount = Equipment::sum('quantity');
-        $totalBookingsCount = Booking::count();
-        $returnedItemsCount = Booking::where('status', 'returned')->count();
-        $totalPenaltyAmount = Penalty::sum('amount');
+        $totalBookingsCount = Booking::whereBetween('created_at', [$startQuery, $endQuery])->count();
+        $returnedItemsCount = Booking::where('status', 'returned')->whereBetween('created_at', [$startQuery, $endQuery])->count();
+        $totalPenaltyAmount = Penalty::whereBetween('created_at', [$startQuery, $endQuery])->sum('amount');
         $activeUsersCount = User::where('role', 'student')->count();
         $returnRate = $totalBookingsCount > 0 ? ($returnedItemsCount / $totalBookingsCount) * 100 : 0;
 
-        // 2. Charts Data (Last 7 days for demo)
+        // 2. Charts Data (Filtered by date range instead of hardcoded 7 days)
         $bookingsChartData = Booking::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->whereBetween('created_at', [$startQuery, $endQuery])
             ->groupBy('date')
             ->orderBy('date', 'ASC')
-            ->take(7)
             ->get();
 
         $categoryChartData = Equipment::selectRaw('category, SUM(quantity) as total')
@@ -155,20 +161,22 @@ class AdminController extends Controller
 
         $usageChartData = Booking::selectRaw('equipment_id, COUNT(*) as count')
             ->with('equipment')
+            ->whereBetween('created_at', [$startQuery, $endQuery])
             ->groupBy('equipment_id')
             ->orderBy('count', 'DESC')
             ->take(5)
             ->get();
 
         $revenueChartData = Penalty::selectRaw('DATE(created_at) as date, SUM(amount) as total')
+            ->whereBetween('created_at', [$startQuery, $endQuery])
             ->groupBy('date')
             ->orderBy('date', 'ASC')
-            ->take(7)
             ->get();
 
         // 3. Tables Data
         $mostUsedEquipment = Booking::selectRaw('equipment_id, COUNT(*) as rentals')
             ->with('equipment')
+            ->whereBetween('created_at', [$startQuery, $endQuery])
             ->groupBy('equipment_id')
             ->orderBy('rentals', 'DESC')
             ->take(5)
@@ -176,12 +184,15 @@ class AdminController extends Controller
 
         $topBorrowers = Booking::selectRaw('user_id, COUNT(*) as rentals')
             ->with('user')
+            ->whereBetween('created_at', [$startQuery, $endQuery])
             ->groupBy('user_id')
             ->orderBy('rentals', 'DESC')
             ->take(5)
             ->get();
 
         return view('admin.report', compact(
+            'fromDate',
+            'toDate',
             'totalEquipmentCount',
             'totalBookingsCount',
             'returnedItemsCount',

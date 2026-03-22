@@ -24,7 +24,8 @@ document.addEventListener('DOMContentLoaded', function () {
     setupPasswordToggle('confirmPassword', 'toggleConfirmPassword');
 
     // Focus on first input field
-    document.querySelector('input[name="fullname"]').focus();
+    const nameInput = document.querySelector('input[name="name"]');
+    if (nameInput) nameInput.focus();
 });
 
 // Password strength checker
@@ -158,17 +159,6 @@ document.getElementById('registrationForm').addEventListener('submit', function 
 
 // Auto-format phone number
 document.querySelector('input[name="phone"]').addEventListener('input', function (e) {
-    let value = e.target.value.replace(/\D/g, '');
-
-    if (value.length > 0) {
-        if (value.length <= 3) {
-            value = value;
-        } else if (value.length <= 6) {
-            value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
-        } else {
-            value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
-        }
-    }
-
+    let value = e.target.value.replace(/\D/g, '').substring(0, 10);
     e.target.value = value;
 });

@@ -80,8 +80,9 @@ document.getElementById('feedbackForm').addEventListener('submit', function (e) 
     // CSRF Token
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    // AJAX Call
-    fetch('/student/feedback', {
+    // AJAX Call - use the current origin + proper path
+    const baseUrl = window.location.origin + window.location.pathname.replace(/\/student\/feedback.*/, '');
+    fetch(baseUrl + '/student/feedback', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

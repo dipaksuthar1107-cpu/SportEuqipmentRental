@@ -339,13 +339,20 @@ class StudentController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
+            'email' => ['required', 'email:rfc,dns', 'unique:users,email', 'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/'],
+            'student_id' => 'required|string|max:50',
+            'phone' => 'required|digits:10',
+            'department' => 'required|string',
             'password' => 'required|min:5|confirmed',
+            'agree_terms' => 'accepted'
         ]);
 
         \App\Models\User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'student_id' => $request->student_id,
+            'phone' => $request->phone,
+            'department' => $request->department,
             'password' => \Illuminate\Support\Facades\Hash::make($request->password),
             'role' => 'student'
         ]);
@@ -466,5 +473,54 @@ class StudentController extends Controller
         session()->forget(['otp_verified', 'reset_email']);
 
         return redirect()->route('student.login')->with('success', 'Password updated successfully!');
+    }
+
+    public function profile()
+    {
+        if (!session('student_login')) {
+            return redirect()->route('student.login')->withErrors(['message' => 'Please login first.']);
+        }
+
+        $student_email = session('student_email');
+        $user = \App\Models\User::where('email', $student_email)->first();
+        $student_name = session('student_name', 'Student');
+
+        if (!$user) {
+            return redirect()->route('student.dashboard')->withErrors(['message' => 'Your profile could not be found. Please login again.']);
+        }
+
+        return view('student.profile', compact('user', 'student_name'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        if (!session('student_login')) {
+            return redirect()->route('student.login')->withErrors(['message' => 'Please login first.']);
+        }
+
+        $student_email = session('student_email');
+        $user = \App\Models\User::where('email', $student_email)->first();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => ['required', 'email:rfc,dns', 'unique:users,email,'.$user->id, 'regex:/^[a-zA-Z0-9._%+-]+@gmail\.com$/'],
+            'student_id' => 'required|string|max:50',
+            'phone' => 'required|digits:10',
+            'department' => 'required|string',
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'student_id' => $request->student_id,
+            'phone' => $request->phone,
+            'department' => $request->department,
+        ]);
+
+        // Update session name and email if they changed
+        session(['student_name' => $user->name]);
+        session(['student_email' => $user->email]);
+
+        return redirect()->back()->with('success', 'Profile updated successfully!');
     }
 }

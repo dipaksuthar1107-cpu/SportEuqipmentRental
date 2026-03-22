@@ -90,11 +90,11 @@
             <div class="row g-3">
                 <div class="col-md-3">
                     <label class="form-label">From Date</label>
-                    <input type="date" class="form-control" id="fromDate" value="2026-01-01">
+                    <input type="date" class="form-control" id="fromDate" value="{{ $fromDate ?? '2026-01-01' }}">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">To Date</label>
-                    <input type="date" class="form-control" id="toDate" value="2026-02-28">
+                    <input type="date" class="form-control" id="toDate" value="{{ $toDate ?? '2026-02-28' }}">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Report Type</label>
@@ -284,9 +284,10 @@
         © <span id="currentYear"></span> Sports Equipment Rental Portal 
     </footer>
 
-    <!-- PDF Export Libraries -->
+    <!-- PDF/Excel Export Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

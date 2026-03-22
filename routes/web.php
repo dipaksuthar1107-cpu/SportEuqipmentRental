@@ -22,6 +22,8 @@ Route::prefix('student')->name('student.')->group(function () {
     
     // Protected Routes
     Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('dashboard');
+    Route::get('/profile', [StudentController::class, 'profile'])->name('profile');
+    Route::post('/profile', [StudentController::class, 'updateProfile'])->name('profile.update');
     Route::get('/equipment-list', [StudentController::class, 'equipmentList'])->name('equipment-list');
     Route::get('/equipment-detail/{id}', [StudentController::class, 'equipmentDetail'])->name('equipment-detail');
     Route::get('/booking-status', [StudentController::class, 'bookingStatus'])->name('booking-status');

@@ -4,8 +4,10 @@ function updateDateTime() {
     const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
 
-    document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', dateOptions);
-    document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-US', timeOptions);
+    const dateEl = document.getElementById('currentDate');
+    const timeEl = document.getElementById('currentTime');
+    if (dateEl) dateEl.textContent = now.toLocaleDateString('en-US', dateOptions);
+    if (timeEl) timeEl.textContent = now.toLocaleTimeString('en-US', timeOptions);
 }
 
 // Update date/time immediately and every second

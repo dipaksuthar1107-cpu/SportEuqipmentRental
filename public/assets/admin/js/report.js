@@ -78,6 +78,55 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+// Generate Report
+document.getElementById('generateReport').addEventListener('click', function () {
+    const fromDate = document.getElementById('fromDate').value;
+    const toDate = document.getElementById('toDate').value;
+    window.location.href = window.location.pathname + '?from_date=' + fromDate + '&to_date=' + toDate;
+});
+
+// Print Report
+document.getElementById('exportPrint').addEventListener('click', function () {
+    window.print();
+});
+
+// Excel Export (Using SheetJS)
+document.getElementById('exportExcel').addEventListener('click', function () {
+    if (typeof XLSX === 'undefined') {
+        showAlert('Excel export library not loaded properly.', 'danger');
+        return;
+    }
+
+    const wb = XLSX.utils.book_new();
+
+    // Summary Sheet
+    const summaryData = [
+        ['Metric', 'Value'],
+        ['Total Equipment', document.getElementById('totalEquipment').innerText],
+        ['Total Bookings', document.getElementById('totalBookings').innerText],
+        ['Returned Items', document.getElementById('returnedItems').innerText],
+        ['Total Penalty', document.getElementById('totalPenalty').innerText],
+        ['Active Users', document.getElementById('activeUsers').innerText],
+        ['Return Rate', document.getElementById('returnRate').innerText],
+    ];
+    const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+    XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary');
+
+    // Equipment Table
+    if (document.getElementById('equipmentTable')) {
+        const wsEquipment = XLSX.utils.table_to_sheet(document.getElementById('equipmentTable'));
+        XLSX.utils.book_append_sheet(wb, wsEquipment, 'Most Used Equipment');
+    }
+
+    // Borrowers Table
+    if (document.getElementById('borrowersTable')) {
+        const wsBorrowers = XLSX.utils.table_to_sheet(document.getElementById('borrowersTable'));
+        XLSX.utils.book_append_sheet(wb, wsBorrowers, 'Top Borrowers');
+    }
+
+    XLSX.writeFile(wb, 'Sports_Rental_Report.xlsx');
+});
+
 // CSV Export
 document.getElementById('exportCSV').addEventListener('click', function () {
     let csv = 'Metric,Value\n';

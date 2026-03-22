@@ -20,13 +20,13 @@
     <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <div class="student-info">
+            <a href="{{ route('student.profile') }}" class="student-info" style="text-decoration: none; color: inherit; display: block; cursor: pointer; transition: transform 0.2s;">
                 <div class="student-avatar">
                     {{ strtoupper(substr($student_name ?? 'Student', 0, 2)) }}
                 </div>
                 <h5>{{ $student_name ?? 'Student' }}</h5>
                 <p>Student Account</p>
-            </div>
+            </a>
         </div>
         
         <ul class="sidebar-menu">
