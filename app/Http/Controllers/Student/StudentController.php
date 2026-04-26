@@ -239,7 +239,8 @@ class StudentController extends Controller
             'pickup_time' => $request->pickup_time,
             'return_date' => $return_date,
             'purpose' => $request->purpose,
-            'status' => 'pending'
+            'status' => 'pending',
+            'notify_approval' => $request->notify_approval ? 1 : 0
         ]);
 
         if ($booking) {

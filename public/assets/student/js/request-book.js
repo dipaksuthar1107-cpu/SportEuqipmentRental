@@ -103,7 +103,8 @@ document.getElementById('requestForm').addEventListener('submit', function (e) {
         duration: duration,
         pickup_date: pickupDate,
         pickup_time: pickupTime,
-        purpose: document.getElementById('purpose').value
+        purpose: document.getElementById('purpose').value,
+        notify_approval: document.getElementById('notifyApproval').checked
     };
 
     fetch('/student/request-book', {

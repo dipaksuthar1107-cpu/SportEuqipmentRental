@@ -224,6 +224,26 @@ class AdminController extends Controller
         $booking->status = $request->status;
         $booking->save();
 
+        if ($request->status == 'approved' && $old_status == 'pending' && $booking->notify_approval) {
+            $user = User::find($booking->user_id);
+            if ($user && $user->email) {
+                try {
+                    Mail::to($user->email)->send(new \App\Mail\ApprovalMail($booking, $user->name));
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error('Failed to send approval mail: ' . $e->getMessage());
+                }
+            }
+            if ($user && $user->phone) {
+                try {
+                    $smsService = new \App\Services\SmsService();
+                    $msg = "Hello {$user->name}, your request for {$booking->equipment->name} has been approved. Pickup at {$booking->booking_date} {$booking->pickup_time}.";
+                    $smsService->sendSms($user->phone, $msg);
+                } catch (\Exception $e) {
+                    \Illuminate\Support\Facades\Log::error('Failed to send approval SMS: ' . $e->getMessage());
+                }
+            }
+        }
+
         // Stock management logic
         if ($request->status == 'rejected' && $old_status == 'pending') {
             // Give back stock if rejected before collection

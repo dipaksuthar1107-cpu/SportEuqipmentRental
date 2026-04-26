@@ -264,6 +264,12 @@
                                 I agree to the rental rules and conditions
                             </label>
                         </div>
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="checkbox" id="notifyApproval">
+                            <label class="form-check-label" for="notifyApproval">
+                                Receive SMS/Email notification for approval (optional)
+                            </label>
+                        </div>
                     </div>
                     
                     <!-- Action Buttons -->

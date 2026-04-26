@@ -17,7 +17,8 @@ class Booking extends Model
         'pickup_time',
         'return_date',
         'purpose',
-        'status'
+        'status',
+        'notify_approval'
     ];
 
     public function user()
